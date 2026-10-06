@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Advokat đavola — Trosku</title>
+<meta name="description" content="Misliš da ti je ideja super? Hajde da je izrešetamo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0E1A;
+  --surf:#131824;
+  --border:#1F2937;
+  --txt:#F0F6FC;
+  --txt2:#6B7280;
+  --advokat:#EF4444;
+  --ti:#3B82F6;
+  --crveno:#EF4444;
+  --narandzasto:#F59E0B;
+  --sivo:#6B7280;
+  --dobro:#10B981;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+  --sat:env(safe-area-inset-top,0px);
+  --sab:env(safe-area-inset-bottom,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--txt);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:17px;line-height:1.5;
+  overflow:hidden;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.app{height:100vh;height:100dvh;max-width:520px;margin:0 auto;position:relative;display:flex;flex-direction:column}
+
+/* ---------- chrome ---------- */
+.chrome{
+  position:absolute;top:0;left:0;right:0;z-index:40;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:calc(10px + var(--sat)) 16px 10px;
+  pointer-events:none;
+}
+.chrome .logo{font-weight:900;font-size:15px;letter-spacing:-0.02em}
+.chrome .logo .dot{color:var(--ti)}
+.countdown{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--txt2);letter-spacing:.04em}
+.countdown.isteklo{color:var(--crveno)}
+
+/* ---------- intro ---------- */
+#intro{
+  position:fixed;inset:0;z-index:100;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+}
+.intro-word{display:flex;align-items:baseline;font-size:52px;font-weight:900;letter-spacing:-0.03em;position:relative}
+.intro-word .l{display:inline-block;opacity:0;transform:translateY(28px);animation:lup .5s var(--ease) forwards}
+@keyframes lup{to{opacity:1;transform:translateY(0)}}
+.intro-dot{
+  width:14px;height:14px;border-radius:50%;background:var(--ti);
+  margin-left:8px;opacity:0;
+  animation:dotfall .7s var(--ease) .55s forwards;
+}
+@keyframes dotfall{
+  0%{opacity:0;transform:translateY(-90px)}
+  45%{opacity:1;transform:translateY(0)}
+  65%{transform:translateY(-22px)}
+  85%{transform:translateY(0)}
+  100%{opacity:1;transform:translateY(0)}
+}
+.intro-bar{
+  position:absolute;left:0;bottom:-26px;height:3px;width:0;border-radius:2px;background:var(--ti);
+  animation:bargrow .8s var(--ease) 1.45s forwards;
+}
+@keyframes bargrow_x{}
+@keyframes bargrow{to{width:100%}}
+@keyframes barg{to{width:100%}}
+@keyframes barGrow{to{width:100%}}
+.intro-out{animation:introout .5s var(--ease) forwards}
+@keyframes introout{to{opacity:0;transform:scale(.6) translate(-30%,-40%)}}
+#intro.gone{display:none}
+
+/* ---------- screens ---------- */
+.screen{
+  position:absolute;inset:0;display:none;flex-direction:column;
+  padding:calc(64px + var(--sat)) 24px calc(24px + var(--sab));
+  overflow-y:auto;overscroll-behavior:contain;
+}
+.screen.aktivan{display:flex}
+.screen.ulaz{animation:scrin .55s var(--ease)}
+@keyframes scrin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ---------- hook ---------- */
+#ekran-hook{justify-content:center}
+.hook-linija{
+  font-size:30px;font-weight:900;letter-spacing:-0.02em;line-height:1.25;
+  opacity:0;transform:translateY(18px);margin-bottom:14px;
+}
+.hook-linija.vidljiva{animation:lup .6s var(--ease) forwards}
+.hook-linija:nth-child(3){color:var(--advokat)}
+.hook-pod{color:var(--txt2);font-size:15px;margin-top:18px;opacity:0}
+.hook-pod.vidljiva{animation:lup .6s var(--ease) forwards}
+
+/* ---------- dugmad ---------- */
+.cta{
+  display:block;width:100%;min-height:56px;margin-top:34px;
+  background:var(--advokat);color:#fff;font-weight:700;font-size:16px;
+  border-radius:12px;padding:16px 20px;letter-spacing:.01em;
+  transition:transform .2s var(--ease),opacity .2s;
+  opacity:0;
+}
+.cta.vidljiva{animation:lup .5s var(--ease) forwards}
+.cta:active{transform:scale(.97)}
+.cta.plava{background:var(--ti)}
+.cta.tiha{background:var(--surf);border:1px solid var(--border);color:var(--txt)}
+
+/* ---------- izbor biznisa ---------- */
+.naslov-ekrana{font-size:26px;font-weight:900;letter-spacing:-0.02em;line-height:1.2;margin-bottom:6px}
+.pod-ekrana{color:var(--txt2);font-size:15px;margin-bottom:24px}
+.kartica{
+  width:100%;text-align:left;background:var(--surf);border:1px solid var(--border);
+  border-radius:14px;padding:18px;margin-bottom:12px;
+  transition:transform .2s var(--ease),border-color .2s;
+  min-height:52px;
+}
+.kartica:active{transform:scale(.98);border-color:var(--ti)}
+.kartica h3{font-size:17px;font-weight:700;margin-bottom:3px}
+.kartica p{font-size:14px;color:var(--txt2);line-height:1.4}
+.kartica .broj-p{display:inline-block;margin-top:9px;font-size:12px;font-weight:700;color:var(--ti)}
+.kartica.ostalo .broj-p{color:var(--txt2)}
+
+/* ---------- ideja ---------- */
+#opis-ideje{
+  width:100%;min-height:140px;resize:none;
+  background:var(--surf);border:1px solid var(--border);border-radius:14px;
+  color:var(--txt);font-family:inherit;font-size:16px;line-height:1.5;
+  padding:16px;outline:none;
+}
+#opis-ideje:focus{border-color:var(--ti)}
+.brojac-kar{text-align:right;font-size:12px;color:var(--txt2);margin-top:6px;font-family:'JetBrains Mono',monospace}
+.privatno{display:flex;gap:8px;align-items:flex-start;color:var(--txt2);font-size:13px;margin-top:14px;line-height:1.45}
+
+/* ---------- razgovor ---------- */
+#ekran-razgovor{padding:0;overflow:hidden}
+.razgovor-vrh{
+  padding:calc(56px + var(--sat)) 20px 10px;
+  border-bottom:1px solid var(--border);background:var(--bg);
+}
+.napredak-red{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.napredak-tekst{font-size:12px;font-weight:700;color:var(--txt2)}
+.preskoci{font-size:12px;color:var(--txt2);text-decoration:underline;padding:6px 0 6px 12px}
+.napredak-traka{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.napredak-traka div{height:100%;width:0;background:var(--ti);border-radius:2px;transition:width .5s var(--ease)}
+#tok{
+  flex:1;overflow-y:auto;padding:18px 16px 8px;
+  display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;
+}
+.balon{
+  max-width:82%;padding:12px 15px;border-radius:16px;
+  font-size:17px;font-weight:500;line-height:1.5;
+  animation:balonin .45s var(--ease);
+}
+@keyframes balonin{from{opacity:0;transform:translateY(12px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+.balon.advokat{
+  align-self:flex-start;background:var(--surf);
+  border-left:3px solid var(--advokat);border-radius:4px 16px 16px 16px;
+}
+.balon.reakcija{border-left-color:var(--border);color:#C9D2DD;font-size:15px}
+.balon.ja{
+  align-self:flex-end;background:var(--ti);color:#fff;
+  border-radius:16px 4px 16px 16px;
+  animation:balonja .4s var(--ease);
+}
+@keyframes balonja{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:translateX(0)}}
+.balon.preskoceno{background:transparent;border:1px dashed var(--border);color:var(--txt2);font-size:14px}
+.kucanje{
+  align-self:flex-start;background:var(--surf);border-left:3px solid var(--advokat);
+  border-radius:4px 16px 16px 16px;padding:14px 16px;display:flex;gap:5px;
+  animation:balonin .3s var(--ease);
+}
+.kucanje span{width:7px;height:7px;border-radius:50%;background:var(--txt2);animation:tacka 1s infinite}
+.kucanje span:nth-child(2){animation-delay:.15s}
+.kucanje span:nth-child(3){animation-delay:.3s}
+@keyframes tacka{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+#odgovori{
+  padding:10px 16px calc(16px + var(--sab));display:flex;flex-direction:column;gap:9px;
+  background:linear-gradient(to top,var(--bg) 85%,transparent);
+}
+.odg{
+  width:100%;min-height:52px;text-align:left;
+  background:var(--surf);border:1px solid var(--border);border-radius:12px;
+  color:var(--txt);font-size:15px;font-weight:500;padding:14px 16px;
+  opacity:0;transform:translateY(10px);
+  transition:border-color .15s;
+}
+.odg.vidljiva{animation:lup .4s var(--ease) forwards}
+.odg:active{border-color:var(--ti);background:#182030}
+.broj-red{display:flex;gap:9px;opacity:0}
+.broj-red.vidljiva{animation:lup .4s var(--ease) forwards}
+.broj-red input{
+  flex:1;min-height:52px;background:var(--surf);border:1px solid var(--border);
+  border-radius:12px;color:var(--txt);font-family:inherit;font-size:16px;padding:0 16px;outline:none;
+}
+.broj-red input:focus{border-color:var(--ti)}
+.broj-red button{
+  background:var(--ti);color:#fff;font-weight:700;border-radius:12px;padding:0 20px;min-height:52px;
+}
+
+/* ---------- izvestaj ---------- */
+#ekran-izvestaj{padding-bottom:calc(40px + var(--sab))}
+.ocena-blok{text-align:center;padding:26px 0 8px}
+.ocena-naslov{font-size:13px;font-weight:700;color:var(--txt2);margin-bottom:4px}
+#ocena-broj{font-size:104px;font-weight:900;letter-spacing:-0.05em;line-height:1}
+#ocena-broj.udar{animation:udar .35s var(--ease)}
+@keyframes udar{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+.ocena-opis{font-size:17px;font-weight:700;margin-top:6px}
+.ocena-nap{
+  font-size:13px;color:var(--txt2);line-height:1.5;margin:16px 0 8px;
+  padding:13px 15px;background:var(--surf);border:1px solid var(--border);border-radius:12px;text-align:left;
+}
+.sekcija{margin-top:30px}
+.sekcija h2{font-size:19px;font-weight:900;letter-spacing:-0.01em;margin-bottom:4px}
+.sekcija .pod{font-size:13px;color:var(--txt2);margin-bottom:14px}
+.rupa{
+  background:var(--surf);border:1px solid var(--border);border-radius:12px;
+  padding:14px 15px 14px 16px;margin-bottom:10px;position:relative;overflow:hidden;
+  opacity:0;transform:translateY(12px);
+}
+.rupa.vidljiva{animation:lup .5s var(--ease) forwards}
+.rupa::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+.rupa.crveno::before{background:var(--crveno)}
+.rupa.narandzasto::before{background:var(--narandzasto)}
+.rupa.sivo::before{background:var(--sivo)}
+.rupa .nivo{font-size:11px;font-weight:700;letter-spacing:.05em;margin-bottom:4px}
+.rupa.crveno .nivo{color:var(--crveno)}
+.rupa.narandzasto .nivo{color:var(--narandzasto)}
+.rupa.sivo .nivo{color:var(--sivo)}
+.rupa h4{font-size:15px;font-weight:700;margin-bottom:3px}
+.rupa p{font-size:14px;color:#B4BDC9;line-height:1.45}
+.bez-rupa{color:var(--dobro);font-size:15px;font-weight:500}
+.izbegnuto{
+  border:1px dashed var(--border);border-radius:12px;padding:13px 15px;margin-bottom:9px;
+  font-size:14px;color:#B4BDC9;line-height:1.45;
+}
+.zadatak{
+  display:flex;gap:13px;background:var(--surf);border:1px solid var(--border);
+  border-radius:12px;padding:15px;margin-bottom:10px;
+}
+.zadatak .kv{
+  flex-shrink:0;width:26px;height:26px;border:2px solid var(--dobro);border-radius:7px;margin-top:2px;
+}
+.zadatak p{font-size:14px;line-height:1.5}
+.ideja-citat{
+  background:var(--surf);border:1px solid var(--border);border-radius:12px;
+  padding:16px;font-size:15px;line-height:1.55;color:#C9D2DD;white-space:pre-wrap;word-wrap:break-word;
+}
+.ideja-pod{font-size:13px;color:var(--txt2);margin-top:10px}
+.izvestaj-dugmad{margin-top:34px;display:flex;flex-direction:column;gap:10px}
+.izvestaj-dugmad .cta{margin-top:0;opacity:1}
+
+/* ---------- print ---------- */
+@media print{
+  body{background:#fff;color:#111;overflow:visible}
+  .app{height:auto;max-width:100%}
+  .chrome,#odgovori,.izvestaj-dugmad,#intro{display:none!important}
+  .screen{position:static;display:none;padding:20px;overflow:visible}
+  #ekran-izvestaj{display:block!important}
+  .rupa,.zadatak,.ocena-nap,.ideja-citat,.izbegnuto{background:#fff;border-color:#ccc;opacity:1;transform:none;animation:none}
+  .rupa p,.ideja-citat,.izbegnuto{color:#333}
+  #ocena-broj,.sekcija h2,.rupa h4,.ocena-opis,.zadatak p{color:#111}
+  .ocena-naslov,.sekcija .pod,.ocena-nap,.ideja-pod{color:#555}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .hook-linija,.hook-pod,.cta,.odg,.rupa,.broj-red{opacity:1!important;transform:none!important}
+  .intro-word .l,.intro-dot{opacity:1!important;transform:none!important}
+}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--ti);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div id="intro" role="button" aria-label="Preskoči uvod"></div>
+
+<div class="app">
+  <div class="chrome">
+    <span class="logo">Trosku<span class="dot">.</span></span>
+    <span class="countdown" id="countdown">BRIŠE SE ZA --:--:--</span>
+  </div>
+
+  <!-- EKRAN 1: HOOK -->
+  <section class="screen" id="ekran-hook">
+    <div>
+      <p class="hook-linija">Ispričao si ideju drugu.</p>
+      <p class="hook-linija">Rekao je da je super.</p>
+      <p class="hook-linija">Drug nije uložio svoje pare.</p>
+      <p class="hook-pod">Advokat đavola postavlja pitanja koja bi ti postavio investitor — ili neko ko je taj biznis već pokušao. Bez ulepšavanja.</p>
+      <button class="cta" id="dugme-start">Hajde da je napadnemo</button>
+    </div>
+  </section>
+
+  <!-- EKRAN 2: BIZNIS -->
+  <section class="screen" id="ekran-biznis">
+    <h1 class="naslov-ekrana">Šta otvaraš?</h1>
+    <p class="pod-ekrana">Svaka putanja ima svoja pitanja. Biraj onu najbližu tvojoj ideji.</p>
+    <div id="lista-biznisa"></div>
+  </section>
+
+  <!-- EKRAN 3: IDEJA -->
+  <section class="screen" id="ekran-ideja">
+    <h1 class="naslov-ekrana">Opiši ideju.</h1>
+    <p class="pod-ekrana">U dve-tri rečenice: šta prodaješ, kome, i gde.</p>
+    <textarea id="opis-ideje" maxlength="300" rows="5"></textarea>
+    <p class="brojac-kar"><span id="brojac">0</span>/300</p>
+    <p class="privatno">🔒 Budi iskren. Niko ovo ne vidi osim tebe — tekst ostaje na tvom uređaju i ne analizira se.</p>
+    <button class="cta plava" id="dugme-ideja" style="opacity:1">Počni razgovor</button>
+  </section>
+
+  <!-- EKRAN 4: RAZGOVOR -->
+  <section class="screen" id="ekran-razgovor">
+    <div class="razgovor-vrh">
+      <div class="napredak-red">
+        <span class="napredak-tekst" id="napredak-tekst">Pitanje 1 od 15</span>
+        <button class="preskoci" id="dugme-preskoci">Preskoči pitanje</button>
+      </div>
+      <div class="napredak-traka"><div id="napredak-fill"></div></div>
+    </div>
+    <div id="tok"></div>
+    <div id="odgovori"></div>
+  </section>
+
+  <!-- EKRAN 5: IZVESTAJ -->
+  <section class="screen" id="ekran-izvestaj">
+    <div class="ocena-blok">
+      <p class="ocena-naslov">OCENA SPREMNOSTI</p>
+      <div id="ocena-broj">0</div>
+      <p class="ocena-opis" id="ocena-opis"></p>
+    </div>
+    <p class="ocena-nap">Ovo meri koliko si promislio, ne da li će ideja uspeti. Dobro promišljena ideja može da propadne. Nepromišljena skoro uvek.</p>
+
+    <div class="sekcija">
+      <h2>Rupe</h2>
+      <p class="pod">Na šta nisi imao odgovor, po ozbiljnosti.</p>
+      <div id="lista-rupa"></div>
+    </div>
+
+    <div class="sekcija" id="sekcija-izbegnuto">
+      <h2>Ova pitanja si preskočio. Investitor neće.</h2>
+      <p class="pod"></p>
+      <div id="lista-izbegnuto"></div>
+    </div>
+
+    <div class="sekcija">
+      <h2>Šta da uradiš ove nedelje</h2>
+      <p class="pod">Tri zadatka. Ne procenjuj — proveri.</p>
+      <div id="lista-zadataka"></div>
+    </div>
+
+    <div class="sekcija" id="sekcija-ideja">
+      <h2>Tvoja ideja, kako si je opisao</h2>
+      <p class="pod"></p>
+      <div class="ideja-citat" id="ideja-citat"></div>
+      <p class="ideja-pod">Ako bi je sad opisao drugačije — to je dobar znak.</p>
+    </div>
+
+    <div class="izvestaj-dugmad">
+      <button class="cta" id="dugme-slika">Sačuvaj izveštaj kao sliku</button>
+      <button class="cta tiha" id="dugme-pdf">Preuzmi kao PDF</button>
+      <button class="cta plava" id="dugme-ponovo">Probaj drugu ideju</button>
+    </div>
+  </section>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   MENJAJ SAMO OVDE — STABLO PITANJA
+   ------------------------------------------------------------
+   Svaki čvor: { id, pitanje, tema, ostro?, tip?, rupa?, odgovori }
+   Odgovor:    { tekst, reakcija, sledeci, poeni }
+     - poeni: 1 = ima odgovor, 0.5 = okvirno, 0 = nema
+     - sledeci: id sledećeg čvora ili null (kraj)
+   rupa: { nivo: 'crveno'|'narandzasto'|'sivo', naslov, zasto, zadatak }
+     - aktivira se kad odgovor nosi 0 poena
+   tip:'broj' — čvor sa poljem za broj (odgovorBroj + odgovori)
+   ============================================================ */
+const TEME = {
+  novac:"Novac", iskustvo:"Iskustvo", kupac:"Kupac", brojevi:"Brojevi",
+  konkurencija:"Konkurencija", vreme:"Vreme", najgori:"Najgori scenario", izlaz:"Izlaz"
+};
+
+const STABLA = {
+
+/* ---------------- UGOSTITELJSTVO ---------------- */
+ugostiteljstvo: {
+  naziv:"Ugostiteljstvo",
+  opis:"Kafić, restoran, pekara, food truck, catering.",
+  placeholder:"Specialty kafić na Vračaru, 30 mesta, fokus na filter kafu i domaće kolače. Ciljam ljude koji rade od kuće.",
+  start:"u1",
+  cvorovi:[
+  { id:"u1", tema:"novac", pitanje:"Koliko para imaš spremno za start?",
+    rupa:{ nivo:"crveno", naslov:"Krećeš bez svog novca", zasto:"Pre nego što ubediš prvog gosta, moraš da ubediš nekog ko daje pare — a on će ti postaviti sva ova pitanja, samo strože.", zadatak:"Napiši na jedan papir koliko tačno tražiš, od koga, i šta nudiš zauzvrat. Ako ne staje na papir, nije spremno." },
+    odgovori:[
+      { tekst:"Do 10.000 €", reakcija:"To je malo za lokal. Može, ali svaka greška te košta duplo.", sledeci:"u2", poeni:0.5 },
+      { tekst:"10–30.000 €", reakcija:"Realno za manji lokal. Idemo dalje.", sledeci:"u2", poeni:1 },
+      { tekst:"Preko 30.000 €", reakcija:"Imaš prostora za grešku. To ne znači da smeš da grešiš.", sledeci:"u2", poeni:1 },
+      { tekst:"Nemam, tražim", reakcija:"Znači prvo moraš nekoga da ubediš. Idemo dalje, ali to je prvi rizik na listi.", sledeci:"u1b", poeni:0 }
+    ]},
+  { id:"u1b", tema:"novac", pitanje:"Od koga tražiš — i šta mu nudiš zauzvrat?",
+    rupa:{ nivo:"crveno", naslov:"Ne znaš ni od koga tražiš novac", zasto:"„Naći ću nekog“ nije plan finansiranja. Svaki izvor novca ima svoju cenu — kamatu, udeo ili porodični ručak koji više nikad nije isti.", zadatak:"Napravi spisak od tri konkretna izvora novca (banka, partner, porodica) i pored svakog napiši šta te tačno košta." },
+    odgovori:[
+      { tekst:"Banka ili kredit", reakcija:"Banka će tražiti iste ove brojeve. Dobro je da ih imaš pre nje.", sledeci:"u2", poeni:1 },
+      { tekst:"Partner ili investitor", reakcija:"Onda ovaj razgovor vežbaš za onaj pravi.", sledeci:"u2", poeni:1 },
+      { tekst:"Porodica i prijatelji", reakcija:"Najskuplji novac na svetu, samo se cena ne vidi odmah.", sledeci:"u2", poeni:0.5 },
+      { tekst:"Ne znam još", reakcija:"To je pretpostavka, ne plan. Beležim.", sledeci:"u2", poeni:0 }
+    ]},
+  { id:"u2", tema:"novac", pitanje:"Koliko te mesečno košta da lokal drži vrata otvorena — kirija, plate, struja, roba?",
+    rupa:{ nivo:"crveno", naslov:"Ne znaš mesečne fiksne troškove", zasto:"Bez tog broja ne znaš koliko dnevno moraš da prodaš, ni da li lokal uopšte može da se isplati.", zadatak:"Saberi sve mesečne troškove: kirija, dve plate, struja, voda, roba, komunalije. Ne procenjuj — zovi i pitaj za cene." },
+    odgovori:[
+      { tekst:"Znam tačno, sabrao sam", reakcija:"Dobro. Taj broj će se pojaviti još par puta.", sledeci:"u3", poeni:1 },
+      { tekst:"Okvirno znam", reakcija:"Okvirno je pretpostavka, ne podatak. Kirija ne prima okvirno.", sledeci:"u3", poeni:0.5 },
+      { tekst:"Nisam računao", reakcija:"To je prvi broj koji moraš da znaš. Bez njega ne znaš da li je mesto koje gledaš dobro ili skupo.", sledeci:"u3", poeni:0 }
+    ]},
+  { id:"u3", tema:"iskustvo", pitanje:"Da li si radio u ugostiteljstvu?",
+    rupa:{ nivo:"narandzasto", naslov:"Nikad nisi radio taj posao", zasto:"Lokal se ne vodi iz gostinske perspektive. Smene, dobavljači, kalo, inspekcije — sve to učiš ili unapred ili na svojim parama.", zadatak:"Nađi nekoga ko je otvorio kafić ili restoran i pitaj ga šta bi uradio drugačije. Časti ga kafom, isplatiće se." },
+    odgovori:[
+      { tekst:"Da, godinama", reakcija:"Onda znaš da je ovo posao nogu, a ne posao ideja.", sledeci:"u4", poeni:1 },
+      { tekst:"Malo, usput", reakcija:"Bolje išta nego ništa, ali gost i gazda vide dva različita lokala.", sledeci:"u4", poeni:0.5 },
+      { tekst:"Nikad", reakcija:"Otvaraš nešto što nikad nisi radio. Nije nemoguće, ali pitaću te za to kasnije.", sledeci:"u3b", poeni:0 }
+    ]},
+  { id:"u3b", tema:"iskustvo", pitanje:"Da li bi mesec dana radio u tuđem lokalu, za platu, pre nego što otvoriš svoj?",
+    odgovori:[
+      { tekst:"Da, to je pametno", reakcija:"To je najjeftinija škola koju ćeš ikad platiti.", sledeci:"u4", poeni:1 },
+      { tekst:"Nemam vremena za to", reakcija:"Imaćeš vremena da iste lekcije učiš skuplje. Beležim.", sledeci:"u4", poeni:0 }
+    ]},
+  { id:"u4", tema:"iskustvo", pitanje:"Ko stoji za šankom prvog dana?",
+    rupa:{ nivo:"narandzasto", naslov:"Nemaš ljude za rad", zasto:"Dobar konobar i dobar kuvar su najtraženija roba u ugostiteljstvu. Lokal bez njih je prostorija sa kirijom.", zadatak:"Pre potpisivanja ičega, nađi i dogovori bar jednu ključnu osobu koja će raditi s tobom od prvog dana." },
+    odgovori:[
+      { tekst:"Ja, svaki dan", reakcija:"Dobro za kontrolu, loše za zdravlje. Računaj i na to.", sledeci:"u5", poeni:1 },
+      { tekst:"Imam dogovorene ljude", reakcija:"Dogovoreno pre otvaranja i zaposleno posle otvaranja nisu isto, ali važi.", sledeci:"u5", poeni:1 },
+      { tekst:"Naći ću nekoga", reakcija:"Svi u ugostiteljstvu „traže nekoga“. Zato su plate otišle gore.", sledeci:"u5", poeni:0 }
+    ]},
+  { id:"u5", tema:"kupac", pitanje:"Ko ti je gost? Opiši mi jednog konkretnog čoveka.", ostro:true,
+    rupa:{ nivo:"crveno", naslov:"Ne znaš ko ti je gost", zasto:"„Svi“ nije ciljna grupa. Lokal za sve je lokal ni za koga — i meni, i cene, i muzika se prave za nekog konkretnog.", zadatak:"Napiši opis jednog konkretnog gosta: godine, posao, kad dolazi, koliko ostavlja. Pa proveri da li takvih ima u kraju." },
+    odgovori:[
+      { tekst:"Znam tačno koga ciljam", reakcija:"Dobro. Sve ostalo — meni, cene, radno vreme — mora da se slaže s tim čovekom.", sledeci:"u6", poeni:1 },
+      { tekst:"Pa... svi koji vole kafu", reakcija:"Svi koji vole kafu već negde piju kafu. Ti mi reci ko će da promeni naviku.", sledeci:"u6", poeni:0 },
+      { tekst:"Nisam siguran još", reakcija:"Nisi odgovorio na pitanje. A ovo pitanje određuje sva ostala.", sledeci:"u6", poeni:0 }
+    ]},
+  { id:"u6", tema:"kupac", pitanje:"Taj čovek već negde pije kafu. Zašto bi prešao kod tebe?",
+    rupa:{ nivo:"narandzasto", naslov:"Nemaš razlog zašto bi gost prešao kod tebe", zasto:"Navika je najjači konkurent. Gost ne menja lokal zbog „lepšeg prostora“ — menja ga zbog nečeg što drugde ne može da dobije.", zadatak:"Napiši jednu rečenicu: „Kod mene dolaziš jer...“ Ako rečenica važi i za lokal preko puta, nije gotova." },
+    odgovori:[
+      { tekst:"Imam konkretan razlog", reakcija:"Ako taj razlog može da stane u jednu rečenicu, imaš nešto.", sledeci:"u7", poeni:1 },
+      { tekst:"Lepši prostor i bolja usluga", reakcija:"To kaže svaki lokal koji se otvorio. I pola njih više ne radi.", sledeci:"u7", poeni:0.5 },
+      { tekst:"Ne znam", reakcija:"Onda gost nema razlog. Navika pobedi kad niko ne ponudi razlog da se promeni.", sledeci:"u7", poeni:0 }
+    ]},
+  { id:"u7", tema:"brojevi", pitanje:"Koliko kafa dnevno moraš da prodaš da pokriješ kiriju i plate?", ostro:true,
+    rupa:{ nivo:"crveno", naslov:"Ne znaš break-even", zasto:"Ne znaš da li je mesto koje gledaš dobro ili skupo. Taj jedan broj odvaja plan od želje.", zadatak:"Izračunaj koliko kafa dnevno moraš da prodaš da pokriješ fiksne troškove. Ne procenjuj — izračunaj, sa svojim cenama i svojom kirijom." },
+    odgovori:[
+      { tekst:"Znam tačno", reakcija:"To je broj koji te ujutru budi. Dobro je da ga znaš pre otvaranja.", sledeci:"u8", poeni:1 },
+      { tekst:"Okvirno", reakcija:"Okvirno znači da nisi seo i izračunao. Pola sata posla, a odlučuje sve.", sledeci:"u8", poeni:0.5 },
+      { tekst:"Nisam računao", reakcija:"To je prvi broj koji moraš da znaš. Bez njega ne znaš da li je mesto koje gledaš dobro ili skupo.", sledeci:"u8", poeni:0 }
+    ]},
+  { id:"u8", tema:"brojevi", tip:"broj", pitanje:"Koliko gostiju dnevno realno očekuješ u prvom mesecu? Upiši broj.",
+    rupa:{ nivo:"narandzasto", naslov:"Nemaš procenu prometa", zasto:"Bez procene broja gostiju ne možeš da planiraš ni robu, ni smene, ni koliko dugo izdržavaš minus.", zadatak:"Idi tri puta na lokaciju koju gledaš, u različito vreme, i broj ljude koji prolaze i ulaze kod konkurencije." },
+    odgovorBroj:{ reakcija:"Zapamti taj broj. Prvog meseca ga uporedi sa stvarnošću — razlika je tvoja prva lekcija.", sledeci:"u9", poeni:1 },
+    odgovori:[
+      { tekst:"Nemam procenu", reakcija:"Onda ne znaš ni koliko roba da naručiš prve nedelje. Beležim.", sledeci:"u9", poeni:0 }
+    ]},
+  { id:"u9", tema:"konkurencija", pitanje:"Koliko sličnih mesta radi u krugu od 500 metara od tvoje lokacije?",
+    rupa:{ nivo:"sivo", naslov:"Nisi mapirao konkurenciju u kraju", zasto:"Ne moraš da ih se plašiš, ali moraš da znaš gde tvoj gost ide danas — jer odatle treba da ga dovedeš.", zadatak:"Prošetaj 500 metara oko lokacije i zapiši svaki lokal: šta nude, kolika im je gužva, koje su cene." },
+    odgovori:[
+      { tekst:"Prebrojao sam, znam ih sve", reakcija:"Dobro. Oni su ti besplatna škola — gledaj šta im radi, a šta zvrji prazno.", sledeci:"u10", poeni:1 },
+      { tekst:"Otprilike znam", reakcija:"Otprilike. Oni tebe neće gledati otprilike.", sledeci:"u10", poeni:0.5 },
+      { tekst:"Nisam gledao", reakcija:"Pola sata šetnje ti da više podataka nego mesec dana planiranja od kuće.", sledeci:"u10", poeni:0 }
+    ]},
+  { id:"u10", tema:"konkurencija", pitanje:"Šta ćeš da radiš ako preko puta otvore isto takav kafić za šest meseci?", ostro:true,
+    rupa:{ nivo:"narandzasto", naslov:"Nemaš odgovor na konkurenciju", zasto:"Ako ti posao može da kopira svako sa parama, neko sa više para će ga kopirati bolje.", zadatak:"Napiši šta kod tebe konkurent ne može da kopira za šest meseci. Ako je lista prazna, to je prvi problem za rešavanje." },
+    odgovori:[
+      { tekst:"Imam nešto što ne mogu da kopiraju", reakcija:"Ako je to istina, to ti je najvrednija stvar u celom planu.", sledeci:"u11", poeni:1 },
+      { tekst:"Spustiću cene", reakcija:"Trka cenama je trka ko duže može da gubi pare. Retko je dobiješ ti.", sledeci:"u11", poeni:0 },
+      { tekst:"Ne znam", reakcija:"Onda si u trci u kojoj pobeđuje onaj ko ima više para.", sledeci:"u11", poeni:0 }
+    ]},
+  { id:"u11", tema:"vreme", pitanje:"Koliko meseci lokal može da radi u minusu pre nego što ostaneš bez para?",
+    rupa:{ nivo:"crveno", naslov:"Ne znaš koliko dugo izdržavaš minus", zasto:"Skoro nijedan lokal ne radi u plusu od prvog meseca. Ako ne znaš koliko minusa izdržiš, ne znaš ni kad je kasno.", zadatak:"Podeli ušteđevinu sa mesečnim troškovima. Taj broj meseci je tvoj kiseonik — zapiši ga i ne laži sebe o njemu." },
+    odgovori:[
+      { tekst:"Šest meseci ili više", reakcija:"To je realna rezerva. Većini zatreba svaki taj mesec.", sledeci:"u12", poeni:1 },
+      { tekst:"Dva-tri meseca", reakcija:"Tanko. Lokalu obično treba više od toga da stane na noge.", sledeci:"u12", poeni:0.5 },
+      { tekst:"Nisam računao", reakcija:"To je broj koji odlučuje da li preživiš lošu zimu. Većina na tom mestu padne. Ti možda nećeš, ali moraš da znaš.", sledeci:"u12", poeni:0 }
+    ]},
+  { id:"u12", tema:"vreme", pitanje:"Od čega ti živiš dok lokal ne počne da zarađuje?",
+    rupa:{ nivo:"crveno", naslov:"Nemaš od čega da živiš do prvog dinara", zasto:"Kad ti lični račun dođe do nule, počinješ da donosiš panične odluke — a panične odluke obaraju i dobre lokale.", zadatak:"Odvoji ličnu rezervu za šest meseci života, odvojeno od para za lokal. Ne sme da bude isti novac." },
+    odgovori:[
+      { tekst:"Imam platu ili ušteđevinu sa strane", reakcija:"Dobro. Lokal i tvoj frižider ne smeju da zavise od iste kase.", sledeci:"u13", poeni:1 },
+      { tekst:"Snaći ću se", reakcija:"To je pretpostavka, ne podatak. Glad ne prima „snaći ću se“.", sledeci:"u13", poeni:0 },
+      { tekst:"Nisam razmišljao o tome", reakcija:"Nisi odgovorio na pitanje. A ovo pitanje stiže svakog prvog u mesecu.", sledeci:"u13", poeni:0 }
+    ]},
+  { id:"u13", tema:"najgori", pitanje:"Ugovor o zakupu: ako posle godinu dana ne ide — koliko te košta izlazak?",
+    rupa:{ nivo:"narandzasto", naslov:"Ne znaš uslove izlaska iz zakupa", zasto:"Loš ugovor o zakupu pretvara neuspešan lokal u dugogodišnji dug. Izlaz se pregovara pre ulaska.", zadatak:"Pre potpisivanja, pročitaj u ugovoru šta se dešava ako izlaziš ranije. Ako ne piše — traži da piše." },
+    odgovori:[
+      { tekst:"Proverio sam, znam uslove", reakcija:"Dobro. Izlaz se dogovara dok ste još u dobrim odnosima.", sledeci:"u14", poeni:1 },
+      { tekst:"Nisam još gledao", reakcija:"Taj papir odlučuje koliko te košta najgori scenario. Pročitaj ga pre potpisa, ne posle.", sledeci:"u14", poeni:0.5 },
+      { tekst:"Potpisaću šta god piše", reakcija:"To gazda lokala voli da čuje. Ti ne bi trebalo.", sledeci:"u14", poeni:0 }
+    ]},
+  { id:"u14", tema:"najgori", pitanje:"Šta je najviše što možeš da izgubiš ako ne upali?", ostro:true,
+    rupa:{ nivo:"crveno", naslov:"Nisi definisao maksimalni gubitak", zasto:"Ako u najgorem scenariju gubiš sve, ne smeš u njega da uđeš nespreman. Rizik se meri pre, ne posle.", zadatak:"Napiši cifru: koliko najviše gubiš ako lokal ne uspe. Pa pošteno odgovori sebi da li tu cifru možeš da podneseš." },
+    odgovori:[
+      { tekst:"Znam cifru i mogu da je podnesem", reakcija:"To je odrasla računica. S njom smeš da rizikuješ.", sledeci:"u15", poeni:1 },
+      { tekst:"Ne smem da razmišljam o tome", reakcija:"Ako ne smeš da razmišljaš o najgorem, najgori scenario odlučuje umesto tebe.", sledeci:"u15", poeni:0 },
+      { tekst:"Sve što imam", reakcija:"Onda ti ne treba hrabrost nego rezervni plan. Hrabrost bez rezerve je kockanje.", sledeci:"u15", poeni:0 }
+    ]},
+  { id:"u15", tema:"izlaz", pitanje:"Poslednje pitanje. Koji je tvoj prag za odustajanje — broj i datum?",
+    rupa:{ nivo:"sivo", naslov:"Nemaš prag za odustajanje", zasto:"Bez unapred zapisanog praga, odluku o odustajanju donosiš umoran, u minusu i prekasno.", zadatak:"Zapiši danas: „Ako do [datum] ne pređem [broj], zatvaram.“ Zalepi to negde gde ćeš ga videti." },
+    odgovori:[
+      { tekst:"Imam ga: broj i datum", reakcija:"Onda si spremniji od većine. Prag se zapisuje dok si trezan, a čita kad nisi.", sledeci:null, poeni:1 },
+      { tekst:"Osećaću kad je vreme", reakcija:"Niko ne oseti kad je vreme. Svi osete šest meseci posle vremena.", sledeci:null, poeni:0.5 },
+      { tekst:"Ne odustajem nikad", reakcija:"To nije plan, to je parola. Najbolji znaju tačno kad bi stali — zato i ne moraju.", sledeci:null, poeni:0 }
+    ]}
+  ]
+},
+
+/* ---------------- USLUGE ---------------- */
+usluge: {
+  naziv:"Usluge",
+  opis:"Frizer, kozmetika, servis, majstor, konsalting, agencija.",
+  placeholder:"Mobilni frizer koji dolazi kod klijenta kući. Ciljam zaposlene žene koje nemaju vremena za salon.",
+  start:"s1",
+  cvorovi:[
+  { id:"s1", tema:"novac", pitanje:"Koliko para imaš za opremu i za prva tri meseca dok posao ne krene?",
+    rupa:{ nivo:"crveno", naslov:"Krećeš bez finansijske rezerve", zasto:"Uslužni posao retko plaća od prve nedelje. Bez rezerve, prvi spor mesec te tera da odustaneš pre nego što posao proradi.", zadatak:"Izračunaj: oprema + tvoji lični troškovi za tri meseca. To je prava cena starta, ne samo cena opreme." },
+    odgovori:[
+      { tekst:"Imam dovoljno za opremu i rezervu", reakcija:"Dobro. Rezerva ti kupuje vreme, a vreme ti kupuje klijente.", sledeci:"s2", poeni:1 },
+      { tekst:"Imam za opremu, rezervu nemam", reakcija:"Znači prvi spor mesec jede tvoj frižider. Beležim.", sledeci:"s2", poeni:0.5 },
+      { tekst:"Nemam još ni za opremu", reakcija:"Onda prvo rešavaš novac, pa posao. Idemo dalje, ali to je prva stavka.", sledeci:"s2", poeni:0 }
+    ]},
+  { id:"s2", tema:"brojevi", pitanje:"Koliko mesečno moraš da zaradiš da pokriješ svoje lične račune?",
+    rupa:{ nivo:"crveno", naslov:"Ne znaš svoj lični break-even", zasto:"Kod usluga si ti firma. Ako ne znaš koliko ti treba za život, ne znaš ni koliko klijenata ti treba, ni da li cena koju naplaćuješ ima smisla.", zadatak:"Saberi sve lične mesečne troškove: stan, hrana, prevoz, računi. Taj broj je minimum koji posao mora da donese." },
+    odgovori:[
+      { tekst:"Znam tačno", reakcija:"Taj broj je temelj svega ostalog. Dobro.", sledeci:"s3", poeni:1 },
+      { tekst:"Okvirno", reakcija:"To je pretpostavka, ne podatak. Tvoji računi stižu sa tačnim ciframa.", sledeci:"s3", poeni:0.5 },
+      { tekst:"Nisam računao", reakcija:"Pola sata sabiranja. Bez tog broja sve ostale brojke vise u vazduhu.", sledeci:"s3", poeni:0 }
+    ]},
+  { id:"s3", tema:"iskustvo", pitanje:"Da li si taj posao već radio za pare? Ne za prijatelje — za pare.",
+    rupa:{ nivo:"narandzasto", naslov:"Nikad nisi naplatio taj posao", zasto:"Prijatelji te hvale besplatno. Tek kad neko plati, saznaš da li tvoj rad vredi tržišnu cenu — i da li umeš da radiš sa nezadovoljnim klijentom.", zadatak:"Pre bilo kakvog ulaganja, naplati taj posao tri puta punom cenom, makar i poznanicima. Reakcija na cenu je podatak." },
+    odgovori:[
+      { tekst:"Da, imam plaćene klijente iza sebe", reakcija:"Onda ne krećeš od nule. To menja celu računicu.", sledeci:"s4", poeni:1 },
+      { tekst:"Radio sam, ali besplatno ili za sitno", reakcija:"Besplatan posao i plaćen posao su dva različita zanata.", sledeci:"s3b", poeni:0.5 },
+      { tekst:"Nikad", reakcija:"Prodaješ veštinu koju tržište još nije ocenilo. To je pretpostavka, ne podatak.", sledeci:"s3b", poeni:0 }
+    ]},
+  { id:"s3b", tema:"iskustvo", pitanje:"Da li bi prvo naplatio tri posla punom cenom, pre nego što daš otkaz ili uložiš u opremu?",
+    odgovori:[
+      { tekst:"Da, to mogu odmah da probam", reakcija:"To ti je najjeftiniji test na svetu. Tri plaćena posla kažu više od sto planova.", sledeci:"s4", poeni:1 },
+      { tekst:"Ne mogu dok ne kupim opremu", reakcija:"Razmisli da li baš ništa ne možeš bez nje — pozajmi, iznajmi, radi kod nekog. Beležim.", sledeci:"s4", poeni:0.5 }
+    ]},
+  { id:"s4", tema:"kupac", pitanje:"Ko tačno plaća tvoju uslugu? Opiši mi jednog konkretnog klijenta.", ostro:true,
+    rupa:{ nivo:"crveno", naslov:"Ne znaš ko ti je klijent", zasto:"„Svima treba“ znači da ne znaš kome da se javiš u ponedeljak ujutru. Konkretan klijent određuje cenu, ponudu i gde se oglašavaš.", zadatak:"Opiši jednog konkretnog klijenta: ko je, koliko zarađuje, šta ga muči, koliko bi platio. Pa nađi pet takvih ljudi i pričaj s njima." },
+    odgovori:[
+      { tekst:"Znam tačno: ko, šta ga muči, koliko plaća", reakcija:"Dobro. Taj čovek ti piše cenovnik, ne ti.", sledeci:"s5", poeni:1 },
+      { tekst:"Svima to treba", reakcija:"Kad to treba svima, ne znaš kome da se javiš u ponedeljak. „Svi“ nemaju broj telefona.", sledeci:"s5", poeni:0 },
+      { tekst:"Nisam još siguran", reakcija:"Nisi odgovorio na pitanje. A od ovog pitanja zavisi i cena i oglas i ponuda.", sledeci:"s5", poeni:0 }
+    ]},
+  { id:"s5", tema:"kupac", pitanje:"Kako taj čovek sazna da postojiš?",
+    rupa:{ nivo:"narandzasto", naslov:"Nemaš plan kako dolaziš do klijenata", zasto:"Dobar majstor bez klijenata je nezaposlen majstor. Preporuke stižu tek kad već imaš posao — za početak ti treba aktivan kanal.", zadatak:"Izaberi jedan kanal (Instagram, lokalne grupe, direktne poruke, komšiluk) i javi se na njemu dvadesetorici potencijalnih klijenata ove nedelje." },
+    odgovori:[
+      { tekst:"Imam plan: konkretan kanal i prve ljude", reakcija:"Dobro. Prvih deset klijenata se ne čeka, oni se traže jedan po jedan.", sledeci:"s6", poeni:1 },
+      { tekst:"Preporuke će me širiti", reakcija:"Preporuke šire posao koji već postoji. Nulti klijent ne dolazi preporukom.", sledeci:"s6", poeni:0.5 },
+      { tekst:"Objaviću na mrežama pa ćemo videti", reakcija:"„Pa ćemo videti“ nije kanal. To je čekanje sa telefonom u ruci.", sledeci:"s6", poeni:0 }
+    ]},
+  { id:"s6", tema:"brojevi", pitanje:"Koliko klijenata nedeljno ti treba da pokriješ onaj mesečni minimum?",
+    rupa:{ nivo:"crveno", naslov:"Ne znaš koliko klijenata ti treba", zasto:"Možda tvoj posao zahteva 40 termina nedeljno da bi preživeo — a u nedelji ima 40 radnih sati. To se otkriva računom, ne radom.", zadatak:"Podeli mesečni minimum sa cenom usluge. Pa proveri da li taj broj termina fizički staje u tvoju nedelju." },
+    odgovori:[
+      { tekst:"Znam tačno, izračunao sam", reakcija:"Dobro. Sad proveri da li taj broj staje u nedelju dana bez da izgoriš.", sledeci:"s7", poeni:1 },
+      { tekst:"Okvirno", reakcija:"Okvirno. A kalendar i kirija rade sa tačnim brojevima.", sledeci:"s7", poeni:0.5 },
+      { tekst:"Nisam računao", reakcija:"To je deljenje dva broja. Uradi ga pre nego što daš otkaz.", sledeci:"s7", poeni:0 }
+    ]},
+  { id:"s7", tema:"brojevi", tip:"broj", pitanje:"Koliko naplaćuješ jednu uslugu? Upiši broj u evrima.",
+    rupa:{ nivo:"narandzasto", naslov:"Nemaš definisanu cenu", zasto:"Bez cene nema računice. A cena „videćemo, zavisi“ klijentu zvuči kao „može jeftinije“.", zadatak:"Postavi jednu cenu i izgovori je naglas trojici ljudi. Gledaj im lica — to je istraživanje tržišta." },
+    odgovorBroj:{ reakcija:"Dobro. Sledeće pitanje je da li je ta cifra tvoja želja ili tržišni podatak.", sledeci:"s8", poeni:1 },
+    odgovori:[
+      { tekst:"Još nisam odredio cenu", reakcija:"Bez cene nema ni računice ni ponude. To je prva odluka, ne poslednja.", sledeci:"s8", poeni:0 }
+    ]},
+  { id:"s8", tema:"brojevi", pitanje:"Kako si došao do te cene?",
+    rupa:{ nivo:"sivo", naslov:"Cena ti nije proverena na tržištu", zasto:"Cena izmišljena u glavi je ili preniska pa radiš džabe, ili previsoka pa ne radiš uopšte. Tržište ti za jedan dan kaže koja je.", zadatak:"Pozovi tri konkurenta kao tajni kupac i pitaj za cenu. Sad znaš raspon — pa biraj gde u njemu stojiš i zašto." },
+    odgovori:[
+      { tekst:"Proverio sam šta naplaćuje konkurencija", reakcija:"To je podatak. Sad odluči da li si jeftiniji, skuplji, ili drugačiji — i zašto.", sledeci:"s9", poeni:1 },
+      { tekst:"Toliko mi treba da mi se isplati", reakcija:"Tvoja potreba nije argument klijentu. On plaća vrednost, ne tvoju kiriju.", sledeci:"s9", poeni:0.5 },
+      { tekst:"Onako, osećaj", reakcija:"Osećaj je pretpostavka, ne podatak. Tri telefonska poziva konkurenciji i imaš podatak.", sledeci:"s9", poeni:0 }
+    ]},
+  { id:"s9", tema:"konkurencija", pitanje:"Ko u tvom gradu već radi tačno ovo? I šta ti radiš drugačije?", ostro:true,
+    rupa:{ nivo:"narandzasto", naslov:"Nemaš odgovor na konkurenciju", zasto:"Ako već postoji neko jeftiniji i iskusniji, klijentu treba razlog da izabere tebe. „Ja ću se više truditi“ nije razlog koji se vidi spolja.", zadatak:"Nađi tri konkurenta, pogledaj šta nude i kako se reklamiraju, i napiši jednu rečenicu šta kod tebe dobijaju a kod njih ne." },
+    odgovori:[
+      { tekst:"Znam ih, i imam jasnu razliku", reakcija:"Ako razliku može da izgovori i tvoj klijent, a ne samo ti — imaš nešto.", sledeci:"s10", poeni:1 },
+      { tekst:"Ima ih, ali ja ću biti bolji", reakcija:"„Bolji“ iznutra ne znači ništa. Klijent spolja mora da vidi po čemu.", sledeci:"s10", poeni:0.5 },
+      { tekst:"Nisam proveravao ko to radi", reakcija:"Konkurencija ti je besplatno istraživanje tržišta. Neko je već platio te lekcije umesto tebe.", sledeci:"s10", poeni:0 }
+    ]},
+  { id:"s10", tema:"konkurencija", pitanje:"Šta radiš ako iskusniji konkurent spusti cenu ispod tvoje?",
+    odgovori:[
+      { tekst:"Ne takmičim se cenom, imam drugu vrednost", reakcija:"To je jedini odgovor koji dugoročno radi. Samo mora da bude istinit.", sledeci:"s11", poeni:1 },
+      { tekst:"Spustiću i ja", reakcija:"On ima rezervu i stare klijente, ti nemaš. U toj trci on dobija.", sledeci:"s11", poeni:0 },
+      { tekst:"Ne znam", reakcija:"Onda si u trci u kojoj pobeđuje onaj ko duže izdrži u minusu.", sledeci:"s11", poeni:0 }
+    ]},
+  { id:"s11", tema:"vreme", pitanje:"Koliko meseci do punog kalendara — i od čega živiš dotle?",
+    rupa:{ nivo:"crveno", naslov:"Nemaš plan za period bez prihoda", zasto:"Uslugama treba vreme da se pročuju. Ako nemaš od čega da živiš tri-šest meseci, odustaćeš tačno pre nego što bi proradilo.", zadatak:"Napravi plan za šest meseci: šta jedeš, čime plaćaš račune, da li zadržavaš posao skraćeno. Napiši to, ne drži u glavi." },
+    odgovori:[
+      { tekst:"Imam platu ili rezervu za taj period", reakcija:"Dobro. Strpljenje je ovde deo kapitala.", sledeci:"s12", poeni:1 },
+      { tekst:"Računam da krene brzo", reakcija:"To je nada, ne plan. Nada ne plaća račune trećeg meseca.", sledeci:"s12", poeni:0 },
+      { tekst:"Nisam razmišljao", reakcija:"Nisi odgovorio na pitanje. A ono stiže svakog prvog u mesecu.", sledeci:"s12", poeni:0 }
+    ]},
+  { id:"s12", tema:"najgori", pitanje:"Šta ako tri meseca telefon ne zvoni? Šta tačno radiš?", ostro:true,
+    rupa:{ nivo:"narandzasto", naslov:"Nemaš plan B za mrtvu sezonu", zasto:"Tri tiha meseca se dese skoro svakome ko radi za sebe. Razlika je u tome ko je unapred znao šta tada radi.", zadatak:"Napiši plan za tihi mesec: koga zoveš, šta nudiš po nižoj ceni, koji dodatni posao prihvataš. Plan pravi sada, dok telefon još ne mora da zvoni." },
+    odgovori:[
+      { tekst:"Imam plan: koga zovem i šta menjam", reakcija:"To je razlika između krize i lošeg kvartala.", sledeci:"s13", poeni:1 },
+      { tekst:"Pojačaću oglašavanje", reakcija:"Čime? Tri meseca bez prihoda su pojela i budžet za oglase. Razmisli šire.", sledeci:"s13", poeni:0.5 },
+      { tekst:"Ne znam, valjda će zvoniti", reakcija:"„Valjda“ je najskuplja reč u ovom poslu.", sledeci:"s13", poeni:0 }
+    ]},
+  { id:"s13", tema:"najgori", pitanje:"Šta je najviše što gubiš ako ovo ne uspe?",
+    rupa:{ nivo:"crveno", naslov:"Nisi definisao maksimalni gubitak", zasto:"Kod usluga se obično ne gubi mnogo para — gubi se vreme, plata koju si ostavio i samopouzdanje. I to treba unapred izmeriti.", zadatak:"Napiši šta sve ulažeš: pare, mesece, propuštenu platu. Pa odgovori sebi da li to možeš da izgubiš i nastaviš dalje." },
+    odgovori:[
+      { tekst:"Znam: izmerio sam pare i vreme", reakcija:"S tom računicom smeš da probaš. To je razumna opklada, ne kockanje.", sledeci:"s14", poeni:1 },
+      { tekst:"Ne gubim ništa, samo vreme", reakcija:"Vreme ti je najskuplji resurs — jedini koji se ne vraća. Izmeri i njega.", sledeci:"s14", poeni:0.5 },
+      { tekst:"Ne razmišljam o neuspehu", reakcija:"Ako ne smeš da pogledaš najgori scenario, on odlučuje umesto tebe.", sledeci:"s14", poeni:0 }
+    ]},
+  { id:"s14", tema:"izlaz", pitanje:"Poslednje pitanje. Kad odustaješ — koji broj, koji datum?",
+    rupa:{ nivo:"sivo", naslov:"Nemaš prag za odustajanje", zasto:"Bez zapisanog praga se odustaje ili prerano iz panike, ili prekasno iz inata. Oba koštaju.", zadatak:"Zapiši: „Ako do [datum] nemam [broj] klijenata mesečno, vraćam se na posao.“ Datum i broj, ne osećaj." },
+    odgovori:[
+      { tekst:"Imam prag: broj klijenata i datum", reakcija:"Spremniji si od većine. Prag se piše trezan, a čita umoran.", sledeci:null, poeni:1 },
+      { tekst:"Osećaću kad je dosta", reakcija:"Niko ne oseti na vreme. Svi osete šest meseci kasnije.", sledeci:null, poeni:0.5 },
+      { tekst:"Ne odustajem", reakcija:"Parola, ne plan. Oni koji uspeju znaju tačno gde im je granica — zato smeju da guraju.", sledeci:null, poeni:0 }
+    ]}
+  ]
+},
+
+/* ---------------- ONLINE ---------------- */
+online: {
+  naziv:"Online",
+  opis:"Veb prodavnica, aplikacija, pretplata, kurs, sadržaj.",
+  placeholder:"Pretplata na mesečnu kutiju domaćih začina sa receptima. Ciljam ljude koji kuvaju ali ne znaju šta da spreme.",
+  start:"o1",
+  cvorovi:[
+  { id:"o1", tema:"novac", pitanje:"Koliko para imaš za izradu i za prvih šest meseci marketinga?",
+    rupa:{ nivo:"crveno", naslov:"Budžet pokriva izradu, ne i kupce", zasto:"Online posao bez budžeta za marketing je sajt koji niko ne poseti. Izrada je manji trošak — dovođenje ljudi je veći.", zadatak:"Podeli budžet na dva dela: izrada i marketing. Ako je sve otišlo na izradu, plan nije gotov." },
+    odgovori:[
+      { tekst:"Imam za oboje, odvojeno", reakcija:"Dobro. Većina potroši sve na izradu pa se čudi tišini.", sledeci:"o2", poeni:1 },
+      { tekst:"Imam za izradu, marketing ćemo videti", reakcija:"Sajt bez marketinga je izlog u šumi. Beležim kao rizik.", sledeci:"o2", poeni:0.5 },
+      { tekst:"Nemam budžet, radim sve besplatno", reakcija:"Može i organski, ali onda plaćaš vremenom — i to mesecima. Idemo dalje.", sledeci:"o2", poeni:0 }
+    ]},
+  { id:"o2", tema:"brojevi", pitanje:"Koliko te košta da dovedeš jednog kupca? Oglas, sadržaj, tvoje vreme — sve zajedno.", ostro:true,
+    rupa:{ nivo:"crveno", naslov:"Ne znaš cenu dovođenja kupca", zasto:"Ako kupac košta više nego što ti donese, svaka prodaja te pravi siromašnijim. To je broj koji online biznise lomi najčešće.", zadatak:"Pusti mali probni oglas (20-50 €) i izmeri koliko košta jedan klik i jedna kupovina. To je najvažniji eksperiment pre ulaganja." },
+    odgovori:[
+      { tekst:"Testirao sam, znam okvirne cifre", reakcija:"To te stavlja ispred 90% ljudi koji kreću online. Ozbiljno.", sledeci:"o3", poeni:1 },
+      { tekst:"Znam cene oglasa, nisam testirao", reakcija:"Tuđe cifre su tuđe cifre. Tvoj proizvod ima svoju cenu klika.", sledeci:"o3", poeni:0.5 },
+      { tekst:"Nisam razmišljao o tome", reakcija:"To je broj koji obara najviše online biznisa. Ne cena izrade — cena kupca.", sledeci:"o3", poeni:0 }
+    ]},
+  { id:"o3", tema:"iskustvo", pitanje:"Da li si ikada nešto prodao online? Bilo šta.",
+    rupa:{ nivo:"narandzasto", naslov:"Nikad nisi prodao ništa online", zasto:"Online prodaja je zanat: slika, tekst, cena, poverenje, dostava, reklamacije. Prva prodaja te nauči više od svih kurseva.", zadatak:"Prodaj bilo šta online ove nedelje — makar polovnu stvar sa KupujemProdajem. Cilj je da prođeš ceo krug: objava, pitanja, naplata, isporuka." },
+    odgovori:[
+      { tekst:"Da, imam iskustva sa online prodajom", reakcija:"Dobro. Onda znaš da je objaviti lako, a prodati nije.", sledeci:"o4", poeni:1 },
+      { tekst:"Prodao sam par stvari privatno", reakcija:"Nešto je. Ali sistematska prodaja strancima je drugi sport.", sledeci:"o3b", poeni:0.5 },
+      { tekst:"Nikad", reakcija:"Kreće se u posao čiji osnovni potez nikad nisi povukao. Beležim.", sledeci:"o3b", poeni:0 }
+    ]},
+  { id:"o3b", tema:"iskustvo", pitanje:"Da li bi probao da prodaš prvih deset komada ručno — porukama, bez sajta — pre nego što platiš izradu?",
+    odgovori:[
+      { tekst:"Da, to mogu odmah", reakcija:"To je najjeftiniji test tržišta koji postoji. Deset ručnih prodaja vredi više od sto planova.", sledeci:"o4", poeni:1 },
+      { tekst:"Ne, bez sajta to ne ide", reakcija:"Ako proizvod ne može da se proda porukom, sajt ga neće spasiti. Razmisli o tome.", sledeci:"o4", poeni:0 }
+    ]},
+  { id:"o4", tema:"novac", pitanje:"Ko pravi sajt, prodavnicu ili aplikaciju — ti ili plaćaš nekog?",
+    rupa:{ nivo:"sivo", naslov:"Izrada ti zavisi od drugih, bez plana", zasto:"Tuđe ruke znače tuđe rokove i tuđe cene. Bez jasnog dogovora, izrada ume da pojede i budžet i godinu dana.", zadatak:"Uzmi tri ponude sa cenom i rokom. Pa proveri da li za tvoj slučaj postoji gotovo rešenje (Shopify, gotove platforme) pre nego što platiš razvoj od nule." },
+    odgovori:[
+      { tekst:"Sam pravim, umem to", reakcija:"Jeftinije jeste. Samo pazi da mesece ne potrošiš na alat umesto na kupce.", sledeci:"o5", poeni:1 },
+      { tekst:"Plaćam, imam ponudu sa cenom i rokom", reakcija:"Dobro. Ugovori i šta se dešava kad rok probije — jer probije.", sledeci:"o5", poeni:1 },
+      { tekst:"Naći ću već nekoga", reakcija:"„Neko“ je najskuplji izvođač na tržištu. Beležim.", sledeci:"o5", poeni:0 }
+    ]},
+  { id:"o5", tema:"kupac", pitanje:"Ko tačno kupuje? Opiši mi jednog konkretnog čoveka.", ostro:true,
+    rupa:{ nivo:"crveno", naslov:"Ne znaš ko ti je kupac", zasto:"Online ne postoji prolaznik koji slučajno uđe. Svakog kupca moraš da nađeš i dovedeš — a ne možeš da nađeš nekog koga ne umeš da opišeš.", zadatak:"Napiši profil jednog kupca: godine, šta ga muči, gde provodi vreme online, koliko troši na slične stvari. Konkretno, sa imenom ako treba." },
+    odgovori:[
+      { tekst:"Znam tačno: ko, šta ga muči, gde ga nalazim", reakcija:"Dobro. Onda znaš i gde se oglašavaš i kojim rečima.", sledeci:"o6", poeni:1 },
+      { tekst:"Šira publika, svako može biti kupac", reakcija:"„Svako“ online znači da se nadmećeš sa celim internetom za svačiju pažnju. To košta najviše.", sledeci:"o6", poeni:0 },
+      { tekst:"Nisam još definisao", reakcija:"Nisi odgovorio na pitanje. A oglas ne možeš da pustiš „nikome konkretno“.", sledeci:"o6", poeni:0 }
+    ]},
+  { id:"o6", tema:"kupac", pitanje:"Sa koliko takvih ljudi si pričao o ovome? Ne porodica, ne prijatelji.",
+    rupa:{ nivo:"crveno", naslov:"Nisi pričao sa stvarnim kupcima", zasto:"Ideja koju su potvrdili samo bliski ljudi je ideja koju niko nije testirao. Deset razgovora sa strancima iz ciljne grupe košta nula dinara, a menja sve.", zadatak:"Nađi deset ljudi iz ciljne grupe (grupe, forumi, poznanici poznanika) i pitaj ih kako to danas rešavaju i koliko ih košta. Ne prodaji — pitaj." },
+    odgovori:[
+      { tekst:"Sa više od deset", reakcija:"To je pravo istraživanje. Šta god su rekli, vredi više od svake ankete.", sledeci:"o7", poeni:1 },
+      { tekst:"Sa dvoje-troje", reakcija:"Početak. Ali troje ljudi je anegdota, ne uzorak.", sledeci:"o7", poeni:0.5 },
+      { tekst:"Ni sa kim još", reakcija:"Znači ideju je do sada potvrdila samo tvoja glava. Ona je pristrasan sudija.", sledeci:"o7", poeni:0 }
+    ]},
+  { id:"o7", tema:"brojevi", pitanje:"Kolika ti je zarada po jednoj prodaji, kad odbiješ sve troškove — robu, dostavu, proviziju, oglas?",
+    rupa:{ nivo:"crveno", naslov:"Ne znaš maržu po prodaji", zasto:"Online marže umeju da budu tanke: dostava, provizije i povrati pojedu pola. Ako ne znaš šta ti ostane, možda radiš u minusu a izgledaš uspešno.", zadatak:"Izračunaj za jedan proizvod: cena minus roba, dostava, provizija platforme, pakovanje i deo oglasa. Broj koji ostane je tvoj stvarni posao." },
+    odgovori:[
+      { tekst:"Znam tačno šta mi ostane", reakcija:"Dobro. Taj broj puta broj prodaja — to je ceo biznis.", sledeci:"o8", poeni:1 },
+      { tekst:"Okvirno", reakcija:"Okvirno. Dostava i provizije ne naplaćuju okvirno.", sledeci:"o8", poeni:0.5 },
+      { tekst:"Nisam računao sve troškove", reakcija:"Online se najlakše radi u minusu a da ne primetiš — promet raste, para nema.", sledeci:"o8", poeni:0 }
+    ]},
+  { id:"o8", tema:"brojevi", tip:"broj", pitanje:"Koliko prodaja mesečno ti treba da pokriješ sve troškove? Upiši broj.",
+    rupa:{ nivo:"crveno", naslov:"Ne znaš break-even broj prodaja", zasto:"Možda ti treba 50 prodaja mesečno, a možda 2.000. To su dva potpuno različita biznisa sa dva različita plana.", zadatak:"Podeli mesečne troškove sa zaradom po prodaji. Pa se zapitaj: da li umem da dovedem toliko kupaca, svakog meseca?" },
+    odgovorBroj:{ reakcija:"Sad najvažnije: koliko poseta ti treba za toliko prodaja? Računaj da kupi 1-3 na sto poseta.", sledeci:"o9", poeni:1 },
+    odgovori:[
+      { tekst:"Nisam računao", reakcija:"To je jedno deljenje. Bez njega ne znaš ni da li juriš 50 ili 5.000 kupaca.", sledeci:"o9", poeni:0 }
+    ]},
+  { id:"o9", tema:"konkurencija", pitanje:"Ko ovo već prodaje? I zašto kupac bira tebe, a ne njih?", ostro:true,
+    rupa:{ nivo:"narandzasto", naslov:"Nemaš odgovor na konkurenciju", zasto:"Online je kupac na jedan klik od svakog konkurenta, uključujući i strane sajtove. „Kod mene je lepše“ ne preživljava poređenje cena.", zadatak:"Nađi tri sajta koja prodaju slično. Naruči sa jednog. Zapiši šta je dobro, šta loše, i šta ćeš ti konkretno drugačije." },
+    odgovori:[
+      { tekst:"Znam konkurente i imam jasnu razliku", reakcija:"Ako tu razliku kupac vidi za pet sekundi na sajtu — imaš nešto.", sledeci:"o10", poeni:1 },
+      { tekst:"Niko ovo ne radi kod nas", reakcija:"Dve opcije: ili si prvi, ili ne postoji tražnja. Druga je češća. Proveri koja je tvoja.", sledeci:"o10", poeni:0.5 },
+      { tekst:"Nisam istraživao", reakcija:"Tvoj kupac će istražiti. Googlaće i tebe i sve ostale pre nego što plati.", sledeci:"o10", poeni:0 }
+    ]},
+  { id:"o10", tema:"konkurencija", pitanje:"Šta ako veliki igrač — domaći ili strani — sutra ponudi isto, jeftinije?",
+    odgovori:[
+      { tekst:"Imam nešto što ne mogu lako da kopiraju", reakcija:"Odnos sa kupcima, zajednica, brend — to su stvari koje pare teško kupuju. Ako ih stvarno imaš.", sledeci:"o11", poeni:1 },
+      { tekst:"Mali sam, neću im biti bitan", reakcija:"Tačno dok ne porasteš. A plan ti je valjda da porasteš.", sledeci:"o11", poeni:0.5 },
+      { tekst:"Ne znam", reakcija:"Onda si u trci u kojoj pobeđuje onaj ko ima više para. Online to ide brzo.", sledeci:"o11", poeni:0 }
+    ]},
+  { id:"o11", tema:"vreme", pitanje:"Koliko meseci do prve prodaje — i od čega živiš dotle?",
+    rupa:{ nivo:"crveno", naslov:"Nemaš plan za period bez prihoda", zasto:"Online biznisu obično treba 6-12 meseci da počne da hrani vlasnika. Ko to ne planira, odustane u mesecu pet — tačno pre krivine.", zadatak:"Napiši plan za šest meseci bez prihoda od ovoga: izvor za život, koliko sati nedeljno radiš na biznisu, šta žrtvuješ." },
+    odgovori:[
+      { tekst:"Imam platu ili rezervu, radim ovo paralelno", reakcija:"Najzdraviji model. Spor, ali te ne pritiska panika.", sledeci:"o12", poeni:1 },
+      { tekst:"Dajem otkaz i krećem punom snagom", reakcija:"Hrabro i skupo. Pritisak da proradi odmah tera na loše odluke. Beležim kao rizik.", sledeci:"o12", poeni:0.5 },
+      { tekst:"Nisam razmišljao", reakcija:"Nisi odgovorio na pitanje. A ono stiže svakog prvog u mesecu.", sledeci:"o12", poeni:0 }
+    ]},
+  { id:"o12", tema:"najgori", pitanje:"Šesti mesec: 50 poseta dnevno, nula prodaja. Šta radiš?", ostro:true,
+    rupa:{ nivo:"narandzasto", naslov:"Nemaš plan šta kad brojke stanu", zasto:"Posete bez prodaje su najčešći online scenario. Ko unapred zna šta tada menja — proizvod, cenu, publiku — taj iz toga izađe. Ostali samo duže troše.", zadatak:"Napiši sada: ako za tri meseca nemam X prodaja, prvo menjam [cenu / ponudu / publiku]. Redosled odluči unapred, dok si miran." },
+    odgovori:[
+      { tekst:"Znam šta bih prvo menjao i kako merim", reakcija:"To se zove plan, a ne nada. Dobro.", sledeci:"o13", poeni:1 },
+      { tekst:"Pojačao bih oglase", reakcija:"Više ljudi na sajt koji ne prodaje znači više para za isti rezultat. Prvo popravi prodaju.", sledeci:"o13", poeni:0 },
+      { tekst:"Ne znam", reakcija:"To je trenutak koji dočeka skoro svaki online biznis. Bolje da odgovor imaš pre njega.", sledeci:"o13", poeni:0 }
+    ]},
+  { id:"o13", tema:"najgori", pitanje:"Šta je najviše što gubiš ako ovo ne uspe?",
+    rupa:{ nivo:"crveno", naslov:"Nisi definisao maksimalni gubitak", zasto:"Rizik se meri pre ulaska. Ako ne znaš cifru koju možeš da izgubiš, ne znaš ni kada da staneš.", zadatak:"Napiši cifru: pare + meseci rada + propušteno. Pa odgovori sebi: mogu li ovo da izgubim i mirno nastavim dalje?" },
+    odgovori:[
+      { tekst:"Znam cifru i mogu da je podnesem", reakcija:"To je odrasla računica. S njom smeš da probaš.", sledeci:"o14", poeni:1 },
+      { tekst:"Samo vreme, pare su male", reakcija:"Vreme je jedini resurs koji se ne vraća. Izmeri i njega u mesecima.", sledeci:"o14", poeni:0.5 },
+      { tekst:"Ne razmišljam o tome", reakcija:"Ako ne smeš da pogledaš najgori scenario, on odlučuje umesto tebe.", sledeci:"o14", poeni:0 }
+    ]},
+  { id:"o14", tema:"izlaz", pitanje:"Poslednje pitanje. Koji je tvoj prag za odustajanje — broj i datum?",
+    rupa:{ nivo:"sivo", naslov:"Nemaš prag za odustajanje", zasto:"Online se lako „još samo malo“ godinama. Bez zapisanog praga, trošiš vreme i pare na nešto što su brojke davno presudile.", zadatak:"Zapiši: „Ako do [datum] nemam [broj] prodaja mesečno, gasim ili menjam iz korena.“ Stavi podsetnik u telefon." },
+    odgovori:[
+      { tekst:"Imam ga: broj prodaja i datum", reakcija:"Spremniji si od većine. Prag se piše trezan, a čita umoran.", sledeci:null, poeni:1 },
+      { tekst:"Osećaću kad je vreme", reakcija:"Niko ne oseti na vreme. Svi osete godinu dana kasnije.", sledeci:null, poeni:0.5 },
+      { tekst:"Ne odustajem nikad", reakcija:"Parola, ne plan. Najbolji znaju tačno gde im je granica — zato smeju da guraju.", sledeci:null, poeni:0 }
+    ]}
+  ]
+},
+
+/* ---------------- NEŠTO DRUGO (opšte stablo) ---------------- */
+ostalo: {
+  naziv:"Nešto drugo",
+  opis:"Opšta pitanja koja važe za svaki biznis. Kraće, ali boli isto.",
+  placeholder:"Proizvodim ručno rađene sveće od sojinog voska i prodajem ih na bazarima i preko Instagrama.",
+  start:"g1",
+  cvorovi:[
+  { id:"g1", tema:"novac", pitanje:"Koliko para imaš spremno za start — i koliko ti stvarno treba?",
+    rupa:{ nivo:"crveno", naslov:"Ne znaš koliko ti novca treba", zasto:"„Koliko imam“ i „koliko treba“ su dva broja. Ako znaš samo prvi, drugi te sačeka usred posla.", zadatak:"Napravi spisak svega što moraš da platiš pre prvog dinara prihoda. Saberi. Pa dodaj 30% — toliko se obično promaši." },
+    odgovori:[
+      { tekst:"Znam oba broja, poklapaju se", reakcija:"Dobro. Većina zna samo koliko ima.", sledeci:"g2", poeni:1 },
+      { tekst:"Znam koliko imam, ne koliko treba", reakcija:"Onda ne znaš ni da li ti fali ni koliko. To je prvi račun.", sledeci:"g2", poeni:0.5 },
+      { tekst:"Ne znam ni jedno ni drugo", reakcija:"Kreni odatle. Sve ostalo čeka ta dva broja.", sledeci:"g2", poeni:0 }
+    ]},
+  { id:"g2", tema:"novac", pitanje:"Koliko te mesečno košta da posao postoji — pre nego što išta zaradi?",
+    rupa:{ nivo:"crveno", naslov:"Ne znaš mesečne troškove", zasto:"Fiksni troškovi su sat koji otkucava od prvog dana. Bez tog broja ne znaš ni koliko ti treba prodaje, ni koliko izdržavaš.", zadatak:"Saberi sve mesečne troškove posla. Ne procenjuj — zovi, pitaj, proveri cene." },
+    odgovori:[
+      { tekst:"Znam tačno", reakcija:"To je broj oko kog se sve vrti.", sledeci:"g3", poeni:1 },
+      { tekst:"Okvirno", reakcija:"Okvirno je pretpostavka, ne podatak.", sledeci:"g3", poeni:0.5 },
+      { tekst:"Nisam računao", reakcija:"Bez tog broja sve ostalo je prepričavanje želja.", sledeci:"g3", poeni:0 }
+    ]},
+  { id:"g3", tema:"iskustvo", pitanje:"Da li si taj posao radio — za pare, ne iz hobija?",
+    rupa:{ nivo:"narandzasto", naslov:"Ulaziš u posao koji nisi radio", zasto:"Svaki posao ima deo koji se ne vidi spolja. Taj deo se plaća — ili unapred tuđim iskustvom, ili kasnije svojim parama.", zadatak:"Nađi nekoga ko taj posao već radi i pitaj ga šta bi uradio drugačije da kreće ispočetka." },
+    odgovori:[
+      { tekst:"Da, radio sam ga za pare", reakcija:"Onda znaš i ono što se spolja ne vidi. To vredi.", sledeci:"g4", poeni:1 },
+      { tekst:"Kao hobi ili usput", reakcija:"Hobi i biznis dele veštinu, ali ne i pritisak.", sledeci:"g4", poeni:0.5 },
+      { tekst:"Nikad", reakcija:"Nije nemoguće. Ali računaj da prvo plaćaš školarinu.", sledeci:"g4", poeni:0 }
+    ]},
+  { id:"g4", tema:"kupac", pitanje:"Ko tačno kupuje? Opiši jednog konkretnog čoveka.", ostro:true,
+    rupa:{ nivo:"crveno", naslov:"Ne znaš ko ti je kupac", zasto:"„Svi“ nije odgovor — svima ne možeš da se javiš, a nikog konkretnog nisi opisao. Kupac određuje cenu, ponudu i kanal.", zadatak:"Opiši jednog kupca: ko je, šta ga muči, koliko plaća. Pa nađi pet takvih i pričaj s njima pre ulaganja." },
+    odgovori:[
+      { tekst:"Znam tačno koga ciljam", reakcija:"Dobro. Taj čovek ti određuje i cenu i ponudu.", sledeci:"g5", poeni:1 },
+      { tekst:"Pa, svima to može da zatreba", reakcija:"„Svi“ nemaju broj telefona. Kome se javljaš u ponedeljak?", sledeci:"g5", poeni:0 },
+      { tekst:"Nisam siguran", reakcija:"Nisi odgovorio na pitanje. A ono određuje sva ostala.", sledeci:"g5", poeni:0 }
+    ]},
+  { id:"g5", tema:"kupac", pitanje:"Taj čovek svoj problem već nekako rešava. Zašto bi prešao kod tebe?",
+    rupa:{ nivo:"narandzasto", naslov:"Nemaš razlog zašto bi kupac prešao kod tebe", zasto:"Tvoj pravi konkurent je navika. Ljudi ne menjaju rešenje koje radi — osim zbog nečeg konkretno boljeg, bržeg ili jeftinijeg.", zadatak:"Dovrši rečenicu: „Kod mene dolaziš jer...“ Ako rečenica važi i za konkurenciju, nije gotova." },
+    odgovori:[
+      { tekst:"Imam konkretan razlog", reakcija:"Ako staje u jednu rečenicu koju i kupac razume — imaš nešto.", sledeci:"g6", poeni:1 },
+      { tekst:"Moje je kvalitetnije", reakcija:"To kaže svako. Kvalitet mora da se vidi pre kupovine, ne posle.", sledeci:"g6", poeni:0.5 },
+      { tekst:"Ne znam", reakcija:"Onda kupac nema razlog da se pomeri. Navika pobeđuje rečima neizrečen kvalitet.", sledeci:"g6", poeni:0 }
+    ]},
+  { id:"g6", tema:"brojevi", pitanje:"Koliko moraš da prodaš mesečno da izađeš na nulu?", ostro:true,
+    rupa:{ nivo:"crveno", naslov:"Ne znaš break-even", zasto:"To je jedan račun: troškovi podeljeni zaradom po prodaji. Bez njega ne znaš da li juriš deset kupaca ili hiljadu.", zadatak:"Izračunaj break-even: mesečni troškovi podeljeni zaradom po jednoj prodaji. Ne procenjuj — izračunaj." },
+    odgovori:[
+      { tekst:"Znam tačno", reakcija:"Taj broj je razlika između plana i želje. Dobro je da ga imaš.", sledeci:"g7", poeni:1 },
+      { tekst:"Okvirno", reakcija:"Okvirno znači da nisi seo da izračunaš. Pola sata posla.", sledeci:"g7", poeni:0.5 },
+      { tekst:"Nisam računao", reakcija:"To je prvi broj koji investitor pita. I prvi koji bi trebalo da pitaš sebe.", sledeci:"g7", poeni:0 }
+    ]},
+  { id:"g7", tema:"konkurencija", pitanje:"Ko to već radi? I šta se desi ako neko sa više para uradi isto?",
+    rupa:{ nivo:"narandzasto", naslov:"Nemaš odgovor na konkurenciju", zasto:"Ako posao može da kopira svako sa parama, neko sa više para će ga kopirati bolje. Treba ti nešto što se ne kopira lako.", zadatak:"Nađi tri konkurenta i zapiši šta kod tebe kupac dobija a kod njih ne. Ako je lista prazna, to rešavaš pre ulaganja." },
+    odgovori:[
+      { tekst:"Znam ih, i imam nešto što se teško kopira", reakcija:"Ako je to istina, to ti je najvrednije u celom planu.", sledeci:"g8", poeni:1 },
+      { tekst:"Ima ih, nisam razmišljao šta tada", reakcija:"Razmisli sada. Jeftinije je nego tada.", sledeci:"g8", poeni:0.5 },
+      { tekst:"Ne znam ni ko ovo radi", reakcija:"Konkurencija je besplatno istraživanje. Neko je već platio lekcije koje tebe čekaju.", sledeci:"g8", poeni:0 }
+    ]},
+  { id:"g8", tema:"vreme", pitanje:"Koliko meseci do prvog ozbiljnog prihoda — i od čega živiš dotle?",
+    rupa:{ nivo:"crveno", naslov:"Nemaš plan za period bez prihoda", zasto:"Skoro svaki posao zarađuje kasnije nego što vlasnik planira. Bez rezerve za život, odustaje se tačno pre nego što proradi.", zadatak:"Napiši od čega živiš sledećih šest meseci, odvojeno od para za posao. Dva budžeta, ne jedan." },
+    odgovori:[
+      { tekst:"Imam platu ili rezervu za taj period", reakcija:"Dobro. Strpljenje je deo kapitala.", sledeci:"g9", poeni:1 },
+      { tekst:"Računam da krene brzo", reakcija:"Svi računaju. Zato je „kasnije nego što misliš“ pravilo, ne izuzetak.", sledeci:"g9", poeni:0 },
+      { tekst:"Nisam razmišljao", reakcija:"Nisi odgovorio na pitanje. A ono stiže svakog prvog u mesecu.", sledeci:"g9", poeni:0 }
+    ]},
+  { id:"g9", tema:"najgori", pitanje:"Šta je najviše što gubiš ako ne upali?", ostro:true,
+    rupa:{ nivo:"crveno", naslov:"Nisi definisao maksimalni gubitak", zasto:"Rizik se meri pre ulaska, ne posle. Ako u najgorem scenariju gubiš sve — to nije preduzetništvo, to je kockanje.", zadatak:"Napiši cifru: pare + meseci + propuštena plata. Pa odgovori sebi da li to možeš da izgubiš i ostaneš na nogama." },
+    odgovori:[
+      { tekst:"Znam cifru i mogu da je podnesem", reakcija:"S tom računicom smeš da rizikuješ.", sledeci:"g10", poeni:1 },
+      { tekst:"Ne smem da razmišljam o tome", reakcija:"Ako ne smeš da pogledaš najgori scenario, on odlučuje umesto tebe.", sledeci:"g10", poeni:0 },
+      { tekst:"Sve što imam", reakcija:"Onda ti pre svega treba rezervni plan, pa tek onda biznis plan.", sledeci:"g10", poeni:0 }
+    ]},
+  { id:"g10", tema:"izlaz", pitanje:"Poslednje pitanje. Kad odustaješ — koji broj, koji datum?",
+    rupa:{ nivo:"sivo", naslov:"Nemaš prag za odustajanje", zasto:"Bez zapisanog praga se odustaje ili prerano iz panike, ili prekasno iz inata. Oba koštaju.", zadatak:"Zapiši: „Ako do [datum] ne pređem [broj], stajem.“ Dok si miran i trezan — zato se sada piše." },
+    odgovori:[
+      { tekst:"Imam prag: broj i datum", reakcija:"Spremniji si od većine. To je sve za sada — pogledaj izveštaj.", sledeci:null, poeni:1 },
+      { tekst:"Osećaću kad je vreme", reakcija:"Niko ne oseti na vreme. Svi osete šest meseci kasnije.", sledeci:null, poeni:0.5 },
+      { tekst:"Ne odustajem nikad", reakcija:"Parola, ne plan. Granica se zna unapred — zato se sme gurati jako.", sledeci:null, poeni:0 }
+    ]}
+  ]
+}
+};
+/* ============================================================
+   KRAJ ZONE ZA MENJANJE
+   ============================================================ */
+
+/* ---------- pomoćne ---------- */
+const $ = id => document.getElementById(id);
+const el = (tag, cls, txt) => {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (txt !== undefined) n.textContent = txt;
+  return n;
+};
+const cekaj = ms => new Promise(r => setTimeout(r, ms));
+const redukovano = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- provera stabla: nijedan ćorsokak ---------- */
+function proveriStabla() {
+  let ok = true;
+  for (const [kljuc, stablo] of Object.entries(STABLA)) {
+    const mapa = new Map(stablo.cvorovi.map(c => [c.id, c]));
+    if (!mapa.has(stablo.start)) { console.error(`[stablo ${kljuc}] start "${stablo.start}" ne postoji`); ok = false; }
+    for (const c of stablo.cvorovi) {
+      const izlazi = [...c.odgovori.map(o => o.sledeci), ...(c.odgovorBroj ? [c.odgovorBroj.sledeci] : [])];
+      if (!izlazi.length) { console.error(`[stablo ${kljuc}] čvor "${c.id}" nema nijedan izlaz`); ok = false; }
+      for (const s of izlazi) {
+        if (s !== null && !mapa.has(s)) { console.error(`[stablo ${kljuc}] čvor "${c.id}" vodi na nepostojeći id "${s}"`); ok = false; }
+      }
+    }
+    // dubinska provera: svaka grana od starta mora da stigne do null bez ciklusa
+    const stize = new Map();
+    const poseta = new Set();
+    const dfs = id => {
+      if (id === null) return true;
+      if (stize.has(id)) return stize.get(id);
+      if (poseta.has(id)) { console.error(`[stablo ${kljuc}] ciklus kroz čvor "${id}"`); return false; }
+      poseta.add(id);
+      const c = mapa.get(id);
+      if (!c) return false;
+      const izlazi = [...c.odgovori.map(o => o.sledeci), ...(c.odgovorBroj ? [c.odgovorBroj.sledeci] : [])];
+      const sve = izlazi.every(dfs);
+      poseta.delete(id);
+      stize.set(id, sve);
+      if (!sve) { console.error(`[stablo ${kljuc}] grana iz čvora "${id}" ne stiže do kraja`); ok = false; }
+      return sve;
+    };
+    dfs(stablo.start);
+  }
+  return ok;
+}
+
+/* najduža putanja od starta (za brojač napretka) */
+function najduzaPutanja(stablo) {
+  const mapa = new Map(stablo.cvorovi.map(c => [c.id, c]));
+  const memo = new Map();
+  const duzina = id => {
+    if (id === null) return 0;
+    if (memo.has(id)) return memo.get(id);
+    memo.set(id, 0); // štiti od ciklusa; provera ciklusa je gore
+    const c = mapa.get(id);
+    const izlazi = [...c.odgovori.map(o => o.sledeci), ...(c.odgovorBroj ? [c.odgovorBroj.sledeci] : [])];
+    const d = 1 + Math.max(...izlazi.map(duzina));
+    memo.set(id, d);
+    return d;
+  };
+  return duzina(stablo.start);
+}
+
+/* ---------- stanje ---------- */
+const stanje = {
+  stabloKljuc: null,
+  opis: "",
+  trenutni: null,
+  rednibroj: 0,
+  ukupno: 0,
+  maxPoena: 0,
+  poeni: 0,
+  rupe: [],        // {nivo, naslov, zasto, zadatak}
+  preskocena: [],  // pitanja (string)
+  gotovo: false
+};
+
+/* ---------- ekrani ---------- */
+function prikazi(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("aktivan", "ulaz"));
+  const s = $(id);
+  s.classList.add("aktivan", "ulaz");
+  s.scrollTop = 0;
+}
+
+/* ---------- intro ---------- */
+function pokreniIntro() {
+  const intro = $("intro");
+  if (sessionStorage.getItem("trosku_intro")) {
+    intro.classList.add("gone");
+    pokreniHook();
+    return;
+  }
+  sessionStorage.setItem("trosku_intro", "1");
+  const rec = el("div", "intro-word");
+  "Trosku".split("").forEach((ch, i) => {
+    const l = el("span", "l", ch);
+    l.style.animationDelay = (i * 60) + "ms";
+    rec.appendChild(l);
+  });
+  rec.appendChild(el("span", "intro-dot"));
+  const bar = el("span", "intro-bar");
+  bar.style.animationName = "barGrow";
+  rec.appendChild(bar);
+  intro.appendChild(rec);
+  let zavrseno = false;
+  const kraj = () => {
+    if (zavrseno) return;
+    zavrseno = true;
+    rec.classList.add("intro-out");
+    setTimeout(() => { intro.classList.add("gone"); pokreniHook(); }, redukovano ? 0 : 450);
+  };
+  intro.addEventListener("click", kraj);
+  setTimeout(kraj, redukovano ? 100 : 2500);
+}
+
+/* ---------- hook ---------- */
+async function pokreniHook() {
+  prikazi("ekran-hook");
+  const linije = document.querySelectorAll(".hook-linija");
+  for (const l of linije) {
+    l.classList.add("vidljiva");
+    await cekaj(redukovano ? 0 : 800);
+  }
+  document.querySelector(".hook-pod").classList.add("vidljiva");
+  await cekaj(redukovano ? 0 : 300);
+  $("dugme-start").classList.add("vidljiva");
+}
+
+/* ---------- izbor biznisa ---------- */
+function popuniBiznise() {
+  const lista = $("lista-biznisa");
+  for (const [kljuc, stablo] of Object.entries(STABLA)) {
+    const k = el("button", "kartica" + (kljuc === "ostalo" ? " ostalo" : ""));
+    k.appendChild(el("h3", null, stablo.naziv));
+    k.appendChild(el("p", null, stablo.opis));
+    k.appendChild(el("span", "broj-p", najduzaPutanja(stablo) + " pitanja · 3–5 min"));
+    k.addEventListener("click", () => {
+      stanje.stabloKljuc = kljuc;
+      $("opis-ideje").placeholder = stablo.placeholder;
+      prikazi("ekran-ideja");
+    });
+    lista.appendChild(k);
+  }
+}
+
+/* ---------- razgovor ---------- */
+const tok = () => $("tok");
+const cvor = id => STABLA[stanje.stabloKljuc].cvorovi.find(c => c.id === id);
+
+function skrol() {
+  const t = tok();
+  t.scrollTo({ top: t.scrollHeight, behavior: redukovano ? "auto" : "smooth" });
+}
+
+function dodajBalon(cls, tekst) {
+  const b = el("div", "balon " + cls, tekst);
+  tok().appendChild(b);
+  skrol();
+  return b;
+}
+
+function azurirajNapredak() {
+  $("napredak-tekst").textContent = `Pitanje ${Math.min(stanje.rednibroj, stanje.ukupno)} od ${stanje.ukupno}`;
+  $("napredak-fill").style.width = Math.min(100, (stanje.rednibroj - 1) / stanje.ukupno * 100) + "%";
+}
+
+async function postaviPitanje(id) {
+  if (id === null || stanje.gotovo) { zavrsiRazgovor(); return; }
+  stanje.trenutni = id;
+  stanje.rednibroj++;
+  azurirajNapredak();
+  const c = cvor(id);
+
+  const kuca = el("div", "kucanje");
+  kuca.append(el("span"), el("span"), el("span"));
+  tok().appendChild(kuca);
+  skrol();
+  await cekaj(redukovano ? 50 : 600);
+  kuca.remove();
+
+  dodajBalon("advokat", c.pitanje);
+  if (c.ostro && navigator.vibrate) { try { navigator.vibrate(40); } catch (e) {} }
+  prikaziOdgovore(c);
+  requestAnimationFrame(skrol);
+}
+
+function prikaziOdgovore(c) {
+  const kont = $("odgovori");
+  kont.textContent = "";
+  let i = 0;
+
+  if (c.tip === "broj") {
+    const red = el("div", "broj-red");
+    const input = document.createElement("input");
+    input.type = "number";
+    input.inputMode = "numeric";
+    input.min = "0";
+    input.placeholder = "Upiši broj";
+    input.setAttribute("aria-label", "Upiši broj");
+    const dugme = el("button", null, "Pošalji");
+    const posalji = () => {
+      const v = input.value.trim();
+      if (!v || Number(v) < 0) return;
+      obradiOdgovor(c, { tekst: v, ...c.odgovorBroj }, true);
+    };
+    dugme.addEventListener("click", posalji);
+    input.addEventListener("keydown", e => { if (e.key === "Enter") posalji(); });
+    red.append(input, dugme);
+    red.style.animationDelay = (i++ * 60) + "ms";
+    red.classList.add("vidljiva");
+    kont.appendChild(red);
+  }
+
+  for (const o of c.odgovori) {
+    const d = el("button", "odg", o.tekst);
+    d.style.animationDelay = (i++ * 60) + "ms";
+    d.classList.add("vidljiva");
+    d.addEventListener("click", () => obradiOdgovor(c, o, false));
+    kont.appendChild(d);
+  }
+}
+
+async function obradiOdgovor(c, odgovor, jeBroj) {
+  $("odgovori").textContent = "";
+  dodajBalon("ja", odgovor.tekst);
+  stanje.maxPoena += 1;
+  stanje.poeni += odgovor.poeni;
+  if (odgovor.poeni === 0 && c.rupa) {
+    stanje.rupe.push({ ...c.rupa, tema: c.tema });
+  } else if (odgovor.poeni === 0.5 && c.rupa) {
+    stanje.rupe.push({
+      nivo: "sivo", tema: c.tema,
+      naslov: "Samo okvirno: " + c.rupa.naslov.charAt(0).toLowerCase() + c.rupa.naslov.slice(1),
+      zasto: "Imaš sliku, ali ne i proveren podatak. " + c.rupa.zasto,
+      zadatak: c.rupa.zadatak
+    });
+  }
+  await cekaj(redukovano ? 50 : 500);
+  if (odgovor.reakcija) {
+    const kuca = el("div", "kucanje");
+    kuca.append(el("span"), el("span"), el("span"));
+    tok().appendChild(kuca);
+    skrol();
+    await cekaj(redukovano ? 50 : 500);
+    kuca.remove();
+    dodajBalon("advokat reakcija", odgovor.reakcija);
+    await cekaj(redukovano ? 50 : 700);
+  }
+  postaviPitanje(odgovor.sledeci);
+}
+
+async function preskociPitanje() {
+  if (!stanje.trenutni || stanje.gotovo) return;
+  const c = cvor(stanje.trenutni);
+  $("odgovori").textContent = "";
+  stanje.maxPoena += 1;
+  stanje.preskocena.push(c.pitanje);
+  dodajBalon("ja preskoceno", "Preskačem ovo pitanje.");
+  await cekaj(redukovano ? 50 : 500);
+  postaviPitanje(c.odgovori[0].sledeci);
+}
+
+async function zavrsiRazgovor() {
+  if (stanje.gotovo) return;
+  stanje.gotovo = true;
+  $("odgovori").textContent = "";
+  $("napredak-fill").style.width = "100%";
+  await cekaj(redukovano ? 50 : 600);
+  dodajBalon("advokat", "To je to. Nisam ovde da ti kažem da li je ideja dobra — nego šta još nisi promislio. Pogledaj izveštaj.");
+  await cekaj(redukovano ? 100 : 1400);
+  prikaziIzvestaj();
+}
+
+/* ---------- izveštaj ---------- */
+const PRAGOVI = [
+  { do: 30, opis: "Ideja je još u glavi. To je u redu, ali nemoj da ulažeš." },
+  { do: 55, opis: "Imaš ideju, nemaš plan." },
+  { do: 75, opis: "Promislio si glavno. Ostalo je nekoliko rupa." },
+  { do: 100, opis: "Spreman si da pričaš sa nekim ko daje pare." }
+];
+const REDOSLED_NIVOA = { crveno: 0, narandzasto: 1, sivo: 2 };
+const NAZIV_NIVOA = { crveno: "MORAŠ DA REŠIŠ PRE ULAGANJA", narandzasto: "REŠI U PRVA TRI MESECA", sivo: "DOBRO JE DA ZNAŠ" };
+
+function izracunajOcenu() {
+  return stanje.maxPoena ? Math.round(stanje.poeni / stanje.maxPoena * 100) : 0;
+}
+
+function prikaziIzvestaj() {
+  const ocena = izracunajOcenu();
+  const rupe = [...stanje.rupe].sort((a, b) => REDOSLED_NIVOA[a.nivo] - REDOSLED_NIVOA[b.nivo]);
+
+  prikazi("ekran-izvestaj");
+  $("ocena-opis").textContent = PRAGOVI.find(p => ocena <= p.do).opis;
+
+  // count-up
+  const brojEl = $("ocena-broj");
+  const trajanje = redukovano ? 1 : 1400;
+  const start = performance.now();
+  const korak = t => {
+    const p = Math.min(1, (t - start) / trajanje);
+    const ease = 1 - Math.pow(1 - p, 3);
+    brojEl.textContent = Math.round(ocena * ease);
+    if (p < 1) requestAnimationFrame(korak);
+    else { brojEl.textContent = ocena; brojEl.classList.add("udar"); if (navigator.vibrate) { try { navigator.vibrate(30); } catch (e) {} } }
+  };
+  requestAnimationFrame(korak);
+
+  // rupe
+  const listaRupa = $("lista-rupa");
+  listaRupa.textContent = "";
+  if (!rupe.length) {
+    listaRupa.appendChild(el("p", "bez-rupa", "Na svako pitanje si imao odgovor. To je retko. Sad proveri da li su odgovori tačni — to je sledeći korak."));
+  }
+  rupe.forEach((r, i) => {
+    const d = el("div", "rupa " + r.nivo);
+    d.style.animationDelay = (i * 100) + "ms";
+    d.classList.add("vidljiva");
+    d.appendChild(el("p", "nivo", NAZIV_NIVOA[r.nivo]));
+    d.appendChild(el("h4", null, r.naslov));
+    d.appendChild(el("p", null, r.zasto));
+    listaRupa.appendChild(d);
+  });
+
+  // preskočena
+  const sek = $("sekcija-izbegnuto");
+  const listaI = $("lista-izbegnuto");
+  listaI.textContent = "";
+  if (stanje.preskocena.length) {
+    sek.style.display = "";
+    stanje.preskocena.forEach(p => listaI.appendChild(el("div", "izbegnuto", "„" + p + "“")));
+  } else {
+    sek.style.display = "none";
+  }
+
+  // zadaci: iz crvenih, pa narandžastih rupa; dopuna opštim
+  const zadaci = [];
+  for (const r of rupe) {
+    if (zadaci.length >= 3) break;
+    if (r.zadatak && !zadaci.includes(r.zadatak)) zadaci.push(r.zadatak);
+  }
+  const dopuna = [
+    "Idi tri puta na lokaciju ili kanal gde prodaješ, u različito vreme, i gledaj kako se ljudi stvarno ponašaju.",
+    "Nađi nekoga ko je pokrenuo sličan posao i pitaj ga šta bi uradio drugačije.",
+    "Proveri svoje brojeve još jednom — sa stvarnim cenama, ne procenama."
+  ];
+  for (const d of dopuna) { if (zadaci.length >= 3) break; zadaci.push(d); }
+  const listaZ = $("lista-zadataka");
+  listaZ.textContent = "";
+  zadaci.slice(0, 3).forEach(z => {
+    const d = el("div", "zadatak");
+    d.appendChild(el("div", "kv"));
+    d.appendChild(el("p", null, z));
+    listaZ.appendChild(d);
+  });
+
+  // ideja
+  if (stanje.opis.trim()) {
+    $("sekcija-ideja").style.display = "";
+    $("ideja-citat").textContent = stanje.opis;
+  } else {
+    $("sekcija-ideja").style.display = "none";
+  }
+
+  // localStorage
+  try {
+    localStorage.setItem("trosku_advokat_izvestaj", JSON.stringify({
+      datum: new Date().toISOString(),
+      biznis: STABLA[stanje.stabloKljuc].naziv,
+      ocena, rupe, preskocena: stanje.preskocena, opis: stanje.opis, zadaci: zadaci.slice(0, 3)
+    }));
+  } catch (e) {}
+}
+
+/* ---------- slika za deljenje ---------- */
+async function napraviSliku() {
+  const ocena = izracunajOcenu();
+  const broj = n => stanje.rupe.filter(r => r.nivo === n).length;
+  const c = document.createElement("canvas");
+  c.width = 1080; c.height = 1350;
+  const g = c.getContext("2d");
+
+  try { await document.fonts.load("900 200px Inter"); await document.fonts.load("700 44px Inter"); } catch (e) {}
+  const F = "'Inter',system-ui,sans-serif";
+
+  g.fillStyle = "#0A0E1A"; g.fillRect(0, 0, 1080, 1350);
+
+  g.fillStyle = "#F0F6FC"; g.font = "900 54px " + F; g.textBaseline = "top";
+  g.fillText("Trosku", 80, 88);
+  g.fillStyle = "#3B82F6"; g.fillText(".", 80 + g.measureText("Trosku").width, 88);
+  g.fillStyle = "#6B7280"; g.font = "700 30px " + F;
+  g.fillText("Advokat đavola", 80, 160);
+
+  g.fillStyle = "#6B7280"; g.font = "700 32px " + F;
+  g.fillText("OCENA SPREMNOSTI", 80, 330);
+  g.fillStyle = "#F0F6FC"; g.font = "900 290px " + F;
+  g.fillText(String(ocena), 70, 380);
+  const sirinaOcene = g.measureText(String(ocena)).width;
+  g.fillStyle = "#6B7280"; g.font = "700 60px " + F;
+  g.fillText("/ 100", 70 + sirinaOcene + 30, 560);
+
+  g.fillStyle = "#F0F6FC"; g.font = "700 42px " + F;
+  const opis = PRAGOVI.find(p => ocena <= p.do).opis;
+  g.fillText(opis.length > 46 ? opis.slice(0, 44).trimEnd() + "…" : opis, 80, 720);
+
+  const redovi = [
+    ["#EF4444", broj("crveno"), "mora da se reši pre ulaganja"],
+    ["#F59E0B", broj("narandzasto"), "u prva tri meseca"],
+    ["#6B7280", broj("sivo"), "dobro je da znaš"]
+  ];
+  let y = 830;
+  for (const [boja, n, txt] of redovi) {
+    g.fillStyle = boja; g.beginPath(); g.arc(100, y + 24, 14, 0, 7); g.fill();
+    g.fillStyle = "#F0F6FC"; g.font = "900 44px " + F; g.fillText(String(n), 140, y);
+    g.fillStyle = "#9CA3AF"; g.font = "500 36px " + F; g.fillText(txt, 200, y + 4);
+    y += 90;
+  }
+
+  g.strokeStyle = "#1F2937"; g.lineWidth = 2;
+  g.beginPath(); g.moveTo(80, 1160); g.lineTo(1000, 1160); g.stroke();
+
+  g.fillStyle = "#F0F6FC"; g.font = "700 34px " + F;
+  g.fillText("Biznis: " + STABLA[stanje.stabloKljuc].naziv, 80, 1200);
+  g.fillStyle = "#6B7280"; g.font = "500 30px " + F;
+  const d = new Date();
+  g.fillText("trosku · 30 dana, 30 aplikacija · " + d.toLocaleDateString("sr-Latn-RS"), 80, 1256);
+
+  return new Promise(res => c.toBlob(b => res(b), "image/png"));
+}
+
+async function podeliSliku() {
+  try {
+    const blob = await napraviSliku();
+    if (!blob) throw new Error("canvas");
+    const fajl = new File([blob], "advokat-djavola-izvestaj.png", { type: "image/png" });
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [fajl] })) {
+      await navigator.share({ files: [fajl], title: "Advokat đavola — izveštaj" });
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "advokat-djavola-izvestaj.png";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  } catch (e) {
+    if (e && e.name === "AbortError") return;
+    const d = $("dugme-slika");
+    d.textContent = "Nije uspelo — probaj ponovo";
+    setTimeout(() => { d.textContent = "Sačuvaj izveštaj kao sliku"; }, 2500);
+  }
+}
+
+/* ---------- countdown ---------- */
+function otkucaj() {
+  const sad = new Date();
+  const ponoc = new Date(sad.getFullYear(), sad.getMonth(), sad.getDate() + 1, 0, 0, 0);
+  const ms = ponoc - sad;
+  const elC = $("countdown");
+  if (ms <= 1000) { elC.textContent = "ISTEKLO"; elC.classList.add("isteklo"); return; }
+  const h = String(Math.floor(ms / 3600000)).padStart(2, "0");
+  const m = String(Math.floor(ms % 3600000 / 60000)).padStart(2, "0");
+  const s = String(Math.floor(ms % 60000 / 1000)).padStart(2, "0");
+  elC.textContent = `BRIŠE SE ZA ${h}:${m}:${s}`;
+}
+
+/* ---------- reset ---------- */
+function ispocetka() {
+  stanje.stabloKljuc = null; stanje.opis = ""; stanje.trenutni = null;
+  stanje.rednibroj = 0; stanje.ukupno = 0; stanje.maxPoena = 0; stanje.poeni = 0;
+  stanje.rupe = []; stanje.preskocena = []; stanje.gotovo = false;
+  tok().textContent = "";
+  $("odgovori").textContent = "";
+  $("opis-ideje").value = "";
+  $("brojac").textContent = "0";
+  $("ocena-broj").classList.remove("udar");
+  prikazi("ekran-biznis");
+}
+
+/* ---------- init ---------- */
+proveriStabla();
+popuniBiznise();
+otkucaj();
+setInterval(otkucaj, 1000);
+
+$("dugme-start").addEventListener("click", () => prikazi("ekran-biznis"));
+$("opis-ideje").addEventListener("input", e => { $("brojac").textContent = String(e.target.value.length); });
+$("dugme-ideja").addEventListener("click", () => {
+  stanje.opis = $("opis-ideje").value;
+  stanje.ukupno = najduzaPutanja(STABLA[stanje.stabloKljuc]);
+  prikazi("ekran-razgovor");
+  postaviPitanje(STABLA[stanje.stabloKljuc].start);
+});
+$("dugme-preskoci").addEventListener("click", preskociPitanje);
+$("dugme-slika").addEventListener("click", podeliSliku);
+$("dugme-pdf").addEventListener("click", () => window.print());
+$("dugme-ponovo").addEventListener("click", ispocetka);
+
+pokreniIntro();
+</script>
+</body>
+</html>
